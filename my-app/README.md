@@ -35,3 +35,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ==========================================================================================
 
 yarn create next-app -ts
+git add my-app/package.json my-app/yarn.lock
