@@ -73,6 +73,7 @@ function MyApp({ Component, pageProps }) {
           learnMoreUrl: 'https://josealonso.github.io/About-Me/',
           disclaimer: Disclaimer,
         }}
+        coolMode
       >
         <Component {...pageProps} />
       </RainbowKitProvider>
