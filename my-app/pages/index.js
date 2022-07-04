@@ -1,6 +1,7 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Head from 'next/head'
 import Image from 'next/image'
+import AddTxButton from '../components/AddTxButton';
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
@@ -36,6 +37,9 @@ export default function Home() {
       <main>
         <div style={{ padding: 40, color: 'blue' }}>
           <h3>Hola a todos</h3>
+        </div>
+        <div>
+          <AddTxButton />
         </div>
       </main>
       <footer className={styles.footer}>

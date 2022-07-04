@@ -2,7 +2,9 @@ import '@rainbow-me/rainbowkit/styles.css';
 import {
   RainbowKitProvider, lightTheme, darkTheme
 } from '@rainbow-me/rainbowkit';
-import { connectorsForWallets, getDefaultWallets, wallet } from '@rainbow-me/rainbowkit';
+import {
+  connectorsForWallets, getDefaultWallets, wallet, useAddRecentTransaction
+} from '@rainbow-me/rainbowkit';
 import { chain, configureChains, createClient, WagmiConfig, defaultChains } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
@@ -46,6 +48,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains}
+        showRecentTransactions={true}
         theme={{
           lightMode: lightTheme(),
           darkMode: darkTheme(),
