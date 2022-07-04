@@ -26,16 +26,20 @@ const { wallets } = getDefaultWallets({
   chains,
 });
 const connectors = connectorsForWallets([
-  ...wallets,
+  // ...wallets,
   {
-    //   groupName: 'Other',
+    groupName: 'Recommended',
     wallets: [
-      //     wallet.argent({ chains }),
-      //     wallet.trust({ chains }),
-      //     wallet.ledger({ chains }),
-      wallet.metaMask({ chains }),
+      wallet.walletConnect({ chains }), wallet.metaMask({ chains }),
     ],
   },
+  {
+    groupName: 'Others',
+    wallets: [
+      wallet.coinbase({ chains }), wallet.rainbow({ chains }),
+    ],
+  },
+
 ]);
 const wagmiClient = createClient({
   autoConnect: true,
