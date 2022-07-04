@@ -13,7 +13,7 @@ export default function Home() {
       </Head>
       <div style={{
         position: "fixed",
-        top: 0,
+        top: 10,
         bottom: 0,
         left: 0,
         right: 10,
@@ -22,8 +22,14 @@ export default function Home() {
         justifyContent: "right"
       }}
       >
-        <ConnectButton />
+        <ConnectButton label="Log in web3" accountStatus="full"
+          chainStatus="full" showBalance={true} />
       </div>
+      <main>
+        <div style={{ top: 100, color: 'blue' }}>
+          <h3>Hola a todos</h3>
+        </div>
+      </main>
       <footer className={styles.footer}>
         Powered by{' '}
         <span className={styles.logo}>
