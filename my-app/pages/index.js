@@ -12,21 +12,17 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div style={{
-        position: "fixed",
-        top: 10,
-        bottom: 0,
-        left: 0,
-        right: 10,
-        display: "inline-grid", // "flex"
-        alignItems: "right",
-        justifyContent: "right"
+        padding: 12,
+        display: "flex",
+        // alignItems: "right",
+        justifyContent: "flex-end"
       }}
       >
         <ConnectButton label="Log in web3" accountStatus="full"
           chainStatus="full" showBalance={true} />
       </div>
       <main>
-        <div style={{ top: 100, color: 'blue' }}>
+        <div style={{ padding: 40, color: 'blue' }}>
           <h3>Hola a todos</h3>
         </div>
       </main>
