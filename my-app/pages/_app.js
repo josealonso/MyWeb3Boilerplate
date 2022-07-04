@@ -3,7 +3,8 @@ import {
   RainbowKitProvider, lightTheme, darkTheme
 } from '@rainbow-me/rainbowkit';
 import {
-  connectorsForWallets, getDefaultWallets, wallet, useAddRecentTransaction
+  connectorsForWallets, getDefaultWallets, wallet,
+  DisclaimerComponent,
 } from '@rainbow-me/rainbowkit';
 import { chain, configureChains, createClient, WagmiConfig, defaultChains } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
@@ -50,6 +51,13 @@ const wagmiClient = createClient({
   provider,
 })
 
+// const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
+const Disclaimer = ({ Text, Link }) => (
+  <Text>
+    Page created by
+    <Link href='https://josealonso.github.io/About-Me/'> JR </Link>
+  </Text>
+);
 // function MyApp({ Component, pageProps }: AppPros) {
 function MyApp({ Component, pageProps }) {
   return (
@@ -59,6 +67,11 @@ function MyApp({ Component, pageProps }) {
         theme={{
           lightMode: lightTheme(),
           darkMode: darkTheme(),
+        }}
+        appInfo={{
+          appName: 'Rainbowkit Tutorial',
+          learnMoreUrl: 'https://josealonso.github.io/About-Me/',
+          disclaimer: Disclaimer,
         }}
       >
         <Component {...pageProps} />
