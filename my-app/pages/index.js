@@ -18,8 +18,20 @@ export default function Home() {
         justifyContent: "flex-end"
       }}
       >
-        <ConnectButton label="Log in web3" accountStatus="full"
-          chainStatus="full" showBalance={true} />
+        <ConnectButton label="Log in web3"
+          accountStatus={{
+            smallScreen: "avatar",
+            largeScreen: "full",
+          }}
+          chainStatus={{
+            smallScreen: "icon",
+            largeScreen: "full",
+          }}
+          showBalance={{
+            smallScreen: false,
+            largeScreen: true,
+          }}
+        />
       </div>
       <main>
         <div style={{ padding: 40, color: 'blue' }}>
