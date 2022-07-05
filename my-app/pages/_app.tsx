@@ -1,3 +1,4 @@
+import { AppProps } from 'next/app';
 import '@rainbow-me/rainbowkit/styles.css';
 import {
   RainbowKitProvider, lightTheme, darkTheme
@@ -51,15 +52,13 @@ const wagmiClient = createClient({
   provider,
 })
 
-// const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
-const Disclaimer = ({ Text, Link }) => (
+const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
   <Text>
     Page created by
     <Link href='https://josealonso.github.io/About-Me/'> JR </Link>
   </Text>
 );
-// function MyApp({ Component, pageProps }: AppPros) {
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains}

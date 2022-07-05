@@ -1,9 +1,11 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { AppProps } from 'next/app';
 import Head from 'next/head'
 import Image from 'next/image'
 import AddTxButton from '../components/AddTxButton';
 import styles from '../styles/Home.module.css'
 
+// export default function Home(): AppProps {
 export default function Home() {
   return (
     <div className={styles.container}>
