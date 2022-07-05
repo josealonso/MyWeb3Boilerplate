@@ -47,7 +47,7 @@ export default function Home() {
       <footer className={styles.footer}>
         Powered by{' '}
         <span className={styles.logo}>
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
+          <Image src="/petete.jpg" alt="JR Logo" width={90} height={60} />
         </span>
 
       </footer>
