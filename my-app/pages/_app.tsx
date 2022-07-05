@@ -14,6 +14,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 
 import { avalancheChain } from '../constants';
 import '../styles/globals.css'
+import { ChakraProvider } from '@chakra-ui/react';
 
 const { chains, provider } = configureChains(
   // If a user has their wallet connected to a chain that is unsupported by your app, the provider will use the first chain listed in the chains array.
@@ -61,21 +62,23 @@ const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}
-        showRecentTransactions={true}
-        theme={{
-          lightMode: lightTheme(),
-          darkMode: darkTheme(),
-        }}
-        appInfo={{
-          appName: 'Rainbowkit Tutorial',
-          learnMoreUrl: 'https://josealonso.github.io/About-Me/',
-          disclaimer: Disclaimer,
-        }}
-        coolMode
-      >
-        <Component {...pageProps} />
-      </RainbowKitProvider>
+      <ChakraProvider>
+        <RainbowKitProvider chains={chains}
+          showRecentTransactions={true}
+          theme={{
+            lightMode: lightTheme(),
+            darkMode: darkTheme(),
+          }}
+          appInfo={{
+            appName: 'Rainbowkit Tutorial',
+            learnMoreUrl: 'https://josealonso.github.io/About-Me/',
+            disclaimer: Disclaimer,
+          }}
+          coolMode
+        >
+          <Component {...pageProps} />
+        </RainbowKitProvider>
+      </ChakraProvider>
     </WagmiConfig>
   );
 }
