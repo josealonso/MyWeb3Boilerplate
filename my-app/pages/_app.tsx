@@ -67,7 +67,8 @@ function MyApp({ Component, pageProps }: AppProps) {
           showRecentTransactions={true}
           theme={{
             lightMode: lightTheme(),
-            darkMode: darkTheme(),
+            darkMode: lightTheme(),
+            // darkMode: darkTheme(),
           }}
           appInfo={{
             appName: 'Rainbowkit Tutorial',
