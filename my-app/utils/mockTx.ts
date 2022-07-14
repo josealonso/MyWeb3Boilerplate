@@ -1,4 +1,4 @@
-export const transactionDone = async () => {
+export const processsTransaction = async () => {
     return new Promise<void>((resolve, reject) => {
         setTimeout(() => {
             // if (email === 'test@test.com' && password === 'password') {
