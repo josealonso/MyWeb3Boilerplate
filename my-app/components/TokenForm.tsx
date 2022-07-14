@@ -10,6 +10,7 @@ import { processsTransaction } from '../utils/mockTx';
 export default function TokenForm(props: AppProps) {
 
     const myForm = useRef(null);
+    // https://stackoverflow.com/questions/54895883/reset-to-initial-state-with-react-hooks
     const resetFields = () => {
         myForm.current.reset();
     }
