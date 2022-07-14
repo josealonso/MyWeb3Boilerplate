@@ -2,16 +2,17 @@ import {
     FormErrorMessage, FormLabel, FormControl, Select,
     Box, Flex, Heading, Input, Button, Alert, CircularProgress,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AppProps } from 'next/app';
 import { processsTransaction } from '../utils/mockTx';
 
+// Reference: https://blog.logrocket.com/how-to-create-forms-with-chakra-ui-in-react-apps/
 export default function TokenForm(props: AppProps) {
-    // const {
-    //     handleSubmit,
-    //     register,
-    //     formState: { errors, isSubmitting },
-    // } = useForm()
+
+    const myForm = useRef(null);
+    const resetFields = () => {
+        myForm.current.reset();
+    }
 
     const [name, setName] = useState("");
     const [symbol, setSymbol] = useState("");
@@ -29,11 +30,8 @@ export default function TokenForm(props: AppProps) {
         // TODO Notify the error here
         setIsLoading(false);
         setIsGenerated(true);
-        setName("");     // reset the form
-        setSymbol("");   // reset the form
-        setSupply("");
-        // }
         alert(`Name: ${name} AND Symbol: ${symbol} AND Supply: ${supply} Netw: ${blockchain}`);
+        resetFields();
     };
     return (
         <Flex width="full" align="center" justifyContent="center">
@@ -42,7 +40,7 @@ export default function TokenForm(props: AppProps) {
                     <Heading>Token Details</Heading>
                 </Box>
                 <Box p={8} maxW="500px" borderWidth={1} borderRadius={8} boxShadow="lg">
-                    <form onSubmit={handleSubmit}>
+                    <form ref={myForm} onSubmit={handleSubmit}>
                         <FormControl isRequired>
                             <FormLabel>Token Name</FormLabel>
                             <Input type="text" placeholder="My Token"
