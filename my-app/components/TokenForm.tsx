@@ -6,9 +6,16 @@ import { useRef, useState } from 'react';
 import { AppProps } from 'next/app';
 import { processsTransaction } from '../utils/mockTx';
 
-// Reference: https://blog.logrocket.com/how-to-create-forms-with-chakra-ui-in-react-apps/
-export default function TokenForm(props: AppProps) {
+export interface TokenData {
+    name: string;
+    symbol: string;
+    supply: string;
+}
 
+// Reference: https://blog.logrocket.com/how-to-create-forms-with-chakra-ui-in-react-apps/
+export default function TokenForm({ formToParent }) {
+
+    let tokenData: TokenData;
     const myForm = useRef(null);
     // https://stackoverflow.com/questions/54895883/reset-to-initial-state-with-react-hooks
     const resetFields = () => {
@@ -32,6 +39,7 @@ export default function TokenForm(props: AppProps) {
         setIsLoading(false);
         setIsGenerated(true);
         alert(`Name: ${name} AND Symbol: ${symbol} AND Supply: ${supply} Netw: ${blockchain}`);
+        tokenData.name = name; tokenData.symbol = symbol; tokenData.supply = supply === undefined ? "25000" : supply;
         resetFields();
     };
     return (
@@ -78,6 +86,9 @@ export default function TokenForm(props: AppProps) {
                             ) : (
                                 'Mint tokens'
                             )}
+                        </Button>
+                        <Button onClick={(data) => formToParent()}>
+                            Prueba
                         </Button>
                     </form>
                 </Box>
