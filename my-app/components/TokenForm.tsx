@@ -5,23 +5,12 @@ import {
 import { useRef, useState } from 'react';
 import { AppProps } from 'next/app';
 import { processsTransaction } from '../utils/mockTx';
+import { TokenData } from '../interfaces/TokenData';
 
-export interface TokenData {
-    name: string;
-    symbol: string;
-    supply: string;
-}
+// References   https://blog.logrocket.com/how-to-create-forms-with-chakra-ui-in-react-apps/
+//https://www.kindacode.com/article/passing-data-from-a-child-component-to-the-parent-in-react/
 
-// Reference: https://blog.logrocket.com/how-to-create-forms-with-chakra-ui-in-react-apps/
-export default function TokenForm({ formToParent }) {
-
-    let tokenData: TokenData;
-    const myForm = useRef(null);
-    // https://stackoverflow.com/questions/54895883/reset-to-initial-state-with-react-hooks
-    const resetFields = () => {
-        myForm.current.reset();
-    }
-
+export default function TokenForm(props) {
     const [name, setName] = useState("");
     const [symbol, setSymbol] = useState("");
     const [supply, setSupply] = useState("");
@@ -29,6 +18,24 @@ export default function TokenForm({ formToParent }) {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isGenerated, setIsGenerated] = useState(false);
+
+    let tokenData: TokenData = {
+        name: name,   // "Ficha",
+        symbol: symbol,    //"SYM",
+        supply: "2500",
+    };
+
+    // let str = "HOLA DESDE EL HIJO";
+    const formToParent = () => {
+        props.passData(tokenData);
+    }
+
+    const myForm = useRef(null);
+    // https://stackoverflow.com/questions/54895883/reset-to-initial-state-with-react-hooks
+    const resetFields = () => {
+        myForm.current.reset();
+    }
+
     const handleSubmit = async event => {
         event.preventDefault();
         setIsLoading(true);
@@ -87,8 +94,8 @@ export default function TokenForm({ formToParent }) {
                                 'Mint tokens'
                             )}
                         </Button>
-                        <Button onClick={(data) => formToParent()}>
-                            Prueba
+                        <Button onClick={formToParent}>
+                            Show the info
                         </Button>
                     </form>
                 </Box>

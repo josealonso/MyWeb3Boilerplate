@@ -1,4 +1,4 @@
-import { Container, Divider } from '@chakra-ui/react';
+import { Container, Divider, Text } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import AddTxButton from '../components/AddTxButton';
 import MyConnectButton from '../components/MyConnectButton';
@@ -12,6 +12,7 @@ import { Contract, providers } from 'ethers';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { useState } from 'react';
 import { useProvider } from 'wagmi';
+import { TokenData } from '../interfaces/TokenData';
 // export default function Home(): AppProps {
 export default function Home() {
 
@@ -83,8 +84,16 @@ export default function Home() {
   const CONTRACT_ADDRESS = "0x";
   // loading is set to true when we are waiting for a transaction to get mined
   const [loading, setLoading] = useState(false);
-  const formToParent = () => {
-    alert("Alert from the TokenForm component !!");
+
+  // let parentTokenData: TokenData = { name: "", symbol: "", supply: "" };
+  const [childData, setChildData] = useState({
+    name: "",
+    symbol: ""
+  });
+
+  const passData = (data) => {
+    setChildData(data);
+    alert(`Data from the Child component: ${childData.name} AND ${childData.symbol}`);
   }
 
   const callContractFunction = async () => {
@@ -113,14 +122,10 @@ export default function Home() {
       <MyHeader />
       <Divider p={5} />
       {/* <Flex h="100vh" py={10}> */}
-      <TokenForm formToParent={formToParent}/>
-      {/* <MyForm />
-        <VStack w="full" h="full" p={10} spacing={10}
-          alignItems="flex-start">
-          <h3>Second section</h3>
-          <MyFooter />
-        </VStack> */}
-      {/* </Flex> */}
+      <TokenForm passData={passData} />
+      <Text>
+        Data from the Child component: {childData.name} AND {childData.symbol}
+      </Text>
     </Container>
   )
 }
