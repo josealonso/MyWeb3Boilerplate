@@ -16,10 +16,10 @@ import { avalancheChain } from '../constants';
 import '../styles/globals.css'
 import { ChakraProvider } from '@chakra-ui/react';
 
-const { chains, provider } = configureChains(
+export const { chains, provider } = configureChains(
   // If a user has their wallet connected to a chain that is unsupported by your app, the provider will use the first chain listed in the chains array.
   // [chain.hardhat, chain.polygonMumbai, chain.polygon],
-  [avalancheChain, chain.polygonMumbai, chain.polygon],
+  [chain.polygonMumbai, avalancheChain, chain.polygon],
   [
     alchemyProvider({ alchemyId: process.env.POLYGON_ALCHEMY_ID }),
     jsonRpcProvider({ rpc: chain => ({ http: chain.rpcUrls.default }) }),

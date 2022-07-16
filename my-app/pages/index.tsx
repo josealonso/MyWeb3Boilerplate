@@ -1,4 +1,4 @@
-import { Container, Divider, Text } from '@chakra-ui/react';
+import { Box, Container, Divider, Flex, Text } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import AddTxButton from '../components/AddTxButton';
 import MyConnectButton from '../components/MyConnectButton';
@@ -8,11 +8,12 @@ import MyHeader from '../components/MyHeader';
 import styles from '../styles/Home.module.css'
 import TokenForm from '../components/TokenForm';
 import { LockInterface } from '../../backend/typechain-types/Lock';
-import { Contract, providers } from 'ethers';
+import { Contract, providers, Signer } from 'ethers';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { useState } from 'react';
-import { useProvider } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
 import { TokenData } from '../interfaces/TokenData';
+import { provider } from './_app';
 // export default function Home(): AppProps {
 export default function Home() {
 
@@ -93,12 +94,36 @@ export default function Home() {
 
   const passData = (data) => {
     setChildData(data);
-    alert(`Data from the Child component: ${childData.name} AND ${childData.symbol}`);
+    mintTokens(data);
+    // alert(`Data from the Child component: ${childData.name} AND ${childData.symbol}`);
+  }
+
+  const mintTokens = (data: any) => {
+    console.log("MINTING: ", data);
+    callContractFunction();
+    // alert("Tokens have been minted !!",);
+    // TODO --> check if the supply is "" and convert it to a number
+    // return (  // Useless
+    //   <Box>
+    //     Tokens have been minted !!
+    //   </Box>
+    // )
+  }
+
+  /*
+    You can use a signer always, but you may want to use a provider if you want to read from the chain without the user connecting their wallet in which case you can configure wagmi to fall back to rpc url providers directly
+    To show certain parts of the dApp without forcinig the user to connect first
+  */
+  const getSignerOrProvider = async () => {
+    const myProvider = provider;
+    // const signer = useSigner();  // wagmi hook
+    // const web3Provider = new providers.Web3Provider(provider);
+    return provider;  // signer;
   }
 
   const callContractFunction = async () => {
     try {
-      const signer = await getSigner();
+      const signer = await getSignerOrProvider();
       const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer) as unknown as LockInterface;
       const tx = tokenContract.functions['withdraw()'];
       setLoading(true);
@@ -110,22 +135,19 @@ export default function Home() {
     }
   };
 
-  const getSigner = async () => {
-    const provider = useProvider();  // wagmi hook
-    // const web3Provider = new providers.Web3Provider(provider);
-    return provider;
-  }
-
   return (
     <Container maxW="container.xl" p={0}>
       <MyConnectButton />
       <MyHeader />
       <Divider p={5} />
-      {/* <Flex h="100vh" py={10}> */}
-      <TokenForm passData={passData} />
-      <Text>
-        Data from the Child component: {childData.name} AND {childData.symbol}
-      </Text>
+      <Flex width="full" align="center" justifyContent="center">
+        {/* <Flex h="100vh" py={10}> */}
+        <TokenForm passData={passData} />
+        <Text>
+          Data from the Child component: {childData.name} AND {childData.symbol}
+          AND {childData.supply}
+        </Text>
+      </Flex>
     </Container>
   )
 }
