@@ -1,25 +1,31 @@
 import { Box, Container, Divider, Flex, Text } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import AddTxButton from '../components/AddTxButton';
-import MyConnectButton from '../components/MyConnectButton';
 import MyFooter from '../components/MyFooter';
 import MyHeader from '../components/MyHeader';
 
-import styles from '../styles/Home.module.css'
 import TokenForm from '../components/TokenForm';
-import { LockInterface } from '../../backend/typechain-types/Lock';
-import { Contract, providers, Signer } from 'ethers';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { LockInterface, Lock } from '../../backend/typechain-types/Lock';
+import { Contract } from 'ethers';
 import { useState } from 'react';
-import { useProvider, useSigner } from 'wagmi';
-import { TokenData } from '../interfaces/TokenData';
-import { provider } from './_app';
-import { contractAddress, contractABI } from '../../backend/configs/contract';
+import { contractAddress, contractABI } from '../configs/contract';
+import { Connect } from '../components/Connect';
+import { useAccount, useProvider, useSigner } from 'wagmi';
+import { Account } from '../components/Account';
+import { useIsMounted } from '../hooks/useIsMounted';
+import { NetworkSwitcher } from '../components/NetworkSwitcher';
+
 // export default function Home(): AppProps {
 export default function Home() {
 
   const CONTRACT_ADDRESS = contractAddress;
   const ABI = contractABI;
+  const isMounted = useIsMounted();
+  const { isConnected } = useAccount();
+
+  const { data: signer, isError, isLoading } = useSigner();
+  const provider = useProvider();
+
   // loading is set to true when we are waiting for a transaction to get mined
   const [loading, setLoading] = useState(false);
 
@@ -29,9 +35,9 @@ export default function Home() {
     symbol: ""
   });
 
-  const passData = (data) => {
-    setChildData(data);
-    mintTokens(data);
+  const passData = (data2) => {
+    setChildData(data2);
+    mintTokens(data2);
     // alert(`Data from the Child component: ${childData.name} AND ${childData.symbol}`);
   }
 
@@ -51,20 +57,22 @@ export default function Home() {
     You can use a signer always, but you may want to use a provider if you want to read from the chain without the user connecting their wallet in which case you can configure wagmi to fall back to rpc url providers directly
     To show certain parts of the dApp without forcinig the user to connect first
   */
-  const getSignerOrProvider = async () => {
-    const myProvider = provider;
-    // const signer = useSigner();  // wagmi hook
-    // const web3Provider = new providers.Web3Provider(provider);
-    return provider;  // signer;
-  }
+  // const getSignerOrProvider = async () => {
+  // const myProvider = provider;
+  // const signer = useSigner();  // wagmi hook
+  // const web3Provider = new providers.Web3Provider(provider);
+  //   return signer;  // provider;
+  // }
 
-  const callContractFunction = async () => {
+  async function callContractFunction() {
     try {
-      const signer = await getSignerOrProvider();
-      const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer) as unknown as LockInterface;
-      const tx = tokenContract.functions['withdraw()'];
-      setLoading(true);
+      // const signer = await getSignerOrProvider();
+      const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as unknown as Lock;
+      // const tx = tokenContract.functions['withdraw()'];
+      // setLoading(true);
+      const tx = await tokenContract.withdraw();
       await tx.wait();
+
       setLoading(false);
       alert("Solidity function called successfully !!");
     } catch (error) {
@@ -74,7 +82,15 @@ export default function Home() {
 
   return (
     <Container maxW="container.xl" p={0}>
-      <MyConnectButton />
+      <Connect />
+      <div>
+        {isMounted && isConnected && (
+          <>
+            <Account />
+            <NetworkSwitcher />
+          </>
+        )}
+      </div>
       <MyHeader />
       <Divider p={5} />
       <Flex width="full" align="center" justifyContent="center">

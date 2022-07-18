@@ -1,89 +1,66 @@
-import { AppProps } from 'next/app';
-import '@rainbow-me/rainbowkit/styles.css';
-import {
-  RainbowKitProvider, lightTheme, darkTheme
-} from '@rainbow-me/rainbowkit';
-import {
-  connectorsForWallets, getDefaultWallets, wallet,
-  DisclaimerComponent,
-} from '@rainbow-me/rainbowkit';
-import { chain, configureChains, createClient, WagmiConfig, defaultChains } from 'wagmi';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { publicProvider } from 'wagmi/providers/public';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { useAccount, useSigner } from 'wagmi';
-
-import { avalancheChain } from '../constants';
-import '../styles/globals.css'
 import { ChakraProvider } from '@chakra-ui/react';
 
-export const { chains, provider } = configureChains(
+import { AppProps } from 'next/app';
+import {
+  configureChains,
+  createClient,
+  WagmiConfig,
+  defaultChains
+}
+  from 'wagmi';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { InjectedConnector } from 'wagmi/connectors/injected';
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
+// import { avalancheChain } from '../constants';
+// import '../styles/globals.css'
+
+const alchemyId = process.env.ALCHEMY_ID;
+const { chains, provider, webSocketProvider } = configureChains(
+  defaultChains, [
+  alchemyProvider({ alchemyId }),
+  // The publicProvider ensures that your chains always have an RPC URL to fall back on (in case Alchemy does not support the chain).
+  // publicProvider(),
+]
   // If a user has their wallet connected to a chain that is unsupported by your app, the provider will use the first chain listed in the chains array.
   // [chain.hardhat, chain.polygonMumbai, chain.polygon],
-  [chain.localhost, chain.polygonMumbai, avalancheChain, chain.polygon],
-  [
-    alchemyProvider({ alchemyId: process.env.POLYGON_ALCHEMY_ID }),
-    jsonRpcProvider({
-      rpc: chain => ({
-        http: `http://localhost:8545`,  // chain.rpcUrls.default,
-      }),
-    }),
-    // The publicProvider ensures that your chains always have an RPC URL to fall back on (in case Alchemy does not support the chain).
-    publicProvider(),
-  ]
+  // [chain.localhost, chain.polygonMumbai, avalancheChain, chain.polygon],
+  // [
+  //   alchemyProvider({ alchemyId: process.env.POLYGON_ALCHEMY_ID }),
+  //   jsonRpcProvider({
+  //     rpc: chain => ({
+  //       http: `http://localhost:8545`,  // chain.rpcUrls.default,
+  //     }),
+  //   }),
 );
-const { wallets } = getDefaultWallets({
-  appName: 'My RainbowKit demo',
-  chains,
-});
-const connectors = connectorsForWallets([
-  // ...wallets,
-  {
-    groupName: 'Recommended',
-    wallets: [
-      wallet.walletConnect({ chains }), wallet.metaMask({ chains }),
-    ],
-  },
-  {
-    groupName: 'Others',
-    wallets: [
-      wallet.coinbase({ chains }), wallet.rainbow({ chains }),
-    ],
-  },
 
-]);
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors,
+  connectors: [
+    new MetaMaskConnector({ chains }),
+    new InjectedConnector({
+      chains,
+      options: {
+        name: "Injected",
+        shimDisconnect: true,
+      },
+    }),
+  ],
   provider,
+  webSocketProvider,
 })
 
-const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
-  <Text>
-    Page created by
-    <Link href='https://josealonso.github.io/About-Me/'> JR </Link>
-  </Text>
-);
+// const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
+//   <Text>
+//     Page created by
+//     <Link href='https://josealonso.github.io/About-Me/'> JR </Link>
+//   </Text>
+// );
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={wagmiClient}>
       <ChakraProvider>
-        <RainbowKitProvider chains={chains}
-          showRecentTransactions={true}
-          theme={{
-            lightMode: lightTheme(),
-            darkMode: lightTheme(),
-            // darkMode: darkTheme(),
-          }}
-          appInfo={{
-            appName: 'Rainbowkit Tutorial',
-            learnMoreUrl: 'https://josealonso.github.io/About-Me/',
-            disclaimer: Disclaimer,
-          }}
-          coolMode
-        >
-          <Component {...pageProps} />
-        </RainbowKitProvider>
+        <Component {...pageProps} />
       </ChakraProvider>
     </WagmiConfig>
   );
