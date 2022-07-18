@@ -3,7 +3,7 @@ import { AppProps } from 'next/app';
 import AddTxButton from '../components/AddTxButton';
 import MyFooter from '../components/MyFooter';
 import MyHeader from '../components/MyHeader';
-
+import { BigNumber } from 'ethers';
 import TokenForm from '../components/TokenForm';
 import { LockInterface, Lock } from '../../backend/typechain-types/Lock';
 import { Contract } from 'ethers';
@@ -72,26 +72,29 @@ export default function Home() {
       // setLoading(true);
       const tx = await tokenContract.withdraw();
       await tx.wait();
+      const unlockTime = tokenContract.unlockTime;   // unlockTime ------> It reverts
 
       setLoading(false);
       alert("Solidity function called successfully !!");
+      console.log("El AAA es: ", unlockTime);
     } catch (error) {
       console.log("Error: ", error);
     }
   };
 
   return (
-    <Container maxW="container.xl" p={0}>
+    // <Container maxW="container.xl" p={0}>
+    <>
       <Connect />
-      <div>
+      <>
         {isMounted && isConnected && (
           <>
             <Account />
             <NetworkSwitcher />
           </>
         )}
-      </div>
-      <MyHeader />
+      </>
+      {/* <MyHeader /> */}
       <Divider p={5} />
       <Flex width="full" align="center" justifyContent="center">
         {/* <Flex h="100vh" py={10}> */}
@@ -101,6 +104,7 @@ export default function Home() {
           AND {childData.supply}
         </Text>
       </Flex>
-    </Container>
+    </>
+    // </Container>
   )
 }
