@@ -11,6 +11,7 @@ import { chain, configureChains, createClient, WagmiConfig, defaultChains } from
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { useAccount, useSigner } from 'wagmi';
 
 import { avalancheChain } from '../constants';
 import '../styles/globals.css'
@@ -19,10 +20,14 @@ import { ChakraProvider } from '@chakra-ui/react';
 export const { chains, provider } = configureChains(
   // If a user has their wallet connected to a chain that is unsupported by your app, the provider will use the first chain listed in the chains array.
   // [chain.hardhat, chain.polygonMumbai, chain.polygon],
-  [chain.polygonMumbai, avalancheChain, chain.polygon],
+  [chain.localhost, chain.polygonMumbai, avalancheChain, chain.polygon],
   [
     alchemyProvider({ alchemyId: process.env.POLYGON_ALCHEMY_ID }),
-    jsonRpcProvider({ rpc: chain => ({ http: chain.rpcUrls.default }) }),
+    jsonRpcProvider({
+      rpc: chain => ({
+        http: `http://localhost:8545`,  // chain.rpcUrls.default,
+      }),
+    }),
     // The publicProvider ensures that your chains always have an RPC URL to fall back on (in case Alchemy does not support the chain).
     publicProvider(),
   ]

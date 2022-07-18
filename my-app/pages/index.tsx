@@ -14,75 +14,12 @@ import { useState } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { TokenData } from '../interfaces/TokenData';
 import { provider } from './_app';
+import { contractAddress, contractABI } from '../../backend/configs/contract';
 // export default function Home(): AppProps {
 export default function Home() {
 
-  const ABI = [
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_unlockTime",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "payable",
-      "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "when",
-          "type": "uint256"
-        }
-      ],
-      "name": "Withdrawal",
-      "type": "event"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address payable",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "unlockTime",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "withdraw",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
-  ];
-  const CONTRACT_ADDRESS = "0x";
+  const CONTRACT_ADDRESS = contractAddress;
+  const ABI = contractABI;
   // loading is set to true when we are waiting for a transaction to get mined
   const [loading, setLoading] = useState(false);
 
