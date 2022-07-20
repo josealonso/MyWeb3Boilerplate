@@ -14,6 +14,7 @@ import { useAccount, useProvider, useSigner } from 'wagmi';
 import { Account } from '../components/Account';
 import { useIsMounted } from '../hooks/useIsMounted';
 import { NetworkSwitcher } from '../components/NetworkSwitcher';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 // export default function Home(): AppProps {
 export default function Home() {
@@ -80,21 +81,23 @@ export default function Home() {
     } catch (error) {
       console.log("Error: ", error);
     }
+    // <>
+    //   <Connect />
+    //   <>
+    //     {isMounted && isConnected && (
+    //       <>
+    //         <Account />
+    //         <NetworkSwitcher />
+    //       </>
+    //     )}
+    //   </>
+
   };
 
   return (
-    // <Container maxW="container.xl" p={0}>
-    <>
-      <Connect />
-      <>
-        {isMounted && isConnected && (
-          <>
-            <Account />
-            <NetworkSwitcher />
-          </>
-        )}
-      </>
+    <Container maxW="container.xl" p={0}>
       {/* <MyHeader /> */}
+      <ConnectButton />
       <Divider p={5} />
       <Flex width="full" align="center" justifyContent="center">
         {/* <Flex h="100vh" py={10}> */}
@@ -104,7 +107,6 @@ export default function Home() {
           AND {childData.supply}
         </Text>
       </Flex>
-    </>
-    // </Container>
+    </Container>
   )
 }
