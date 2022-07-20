@@ -7,7 +7,6 @@ import {
   connectorsForWallets,
   wallet,
   DisclaimerComponent,
-  midnightTheme,
   lightTheme,
   darkTheme
 } from '@rainbow-me/rainbowkit';
@@ -79,6 +78,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider appInfo={demoAppInfo} chains={chains}
+        showRecentTransactions={true}
+        // initialChain={chain.mainnet}
         theme={{
           lightMode: lightTheme(),
           darkMode: darkTheme(),
