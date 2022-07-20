@@ -17,41 +17,28 @@ import {
   chain
 }
   from 'wagmi';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
 // import { avalancheChain } from '../constants';
 // import '../styles/globals.css'
 
-const alchemyId = process.env.ALCHEMY_ID;
-const { chains, provider, webSocketProvider } = configureChains(
-  // [
-  //   jsonRpcProvider({
-  //     rpc: chain => ({
-  //       http: `http://localhost:8545`,  // chain.rpcUrls.default,
-  //     }),
-  //   }),
-  // ],
+export const { chains, provider, webSocketProvider } = configureChains(
+  // If a user has their wallet connected to a chain that is unsupported by your app, the provider will use the first chain listed in the chains array.
   [
     chain.localhost, chain.polygon, chain.polygonMumbai
   ],
   [
-    alchemyProvider({ alchemyId }),
+    alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }),
+    jsonRpcProvider({
+      rpc: chain => ({
+        http: `http://localhost:8545`,  // chain.rpcUrls.default,
+      }),
+    }),
+    // The publicProvider ensures that your chains always have an RPC URL to fall back on (in case Alchemy does not support the chain).
     publicProvider(),
   ],
-  // The publicProvider ensures that your chains always have an RPC URL to fall back on (in case Alchemy does not support the chain).
-  // publicProvider(),
-
-  // If a user has their wallet connected to a chain that is unsupported by your app, the provider will use the first chain listed in the chains array.
-  // [chain.hardhat, chain.polygonMumbai, chain.polygon],
-  // [chain.localhost, chain.polygonMumbai, avalancheChain, chain.polygon],
-  // [
-  //   alchemyProvider({ alchemyId: process.env.POLYGON_ALCHEMY_ID }),
-  //   jsonRpcProvider({
-  //     rpc: chain => ({
-  //       http: `http://localhost:8545`,  // chain.rpcUrls.default,
-  //     }),
-  //   }),
 );
 
 const { wallets } = getDefaultWallets({
@@ -59,19 +46,25 @@ const { wallets } = getDefaultWallets({
   chains,
 });
 
-const demoAppInfo = {
-  appName: 'Rainbowkit Demo',
-};
+// const demoAppInfo = {
+//   appName: 'Rainbowkit Demo',
+// };
 
 const connectors = connectorsForWallets([
-  ...wallets,
+  // ...wallets,
+  {
+    groupName: 'Recommended',
+    wallets: [
+      wallet.walletConnect({ chains }), wallet.metaMask({ chains }),
+    ],
+  },
 ]);
 
 const wagmiClient = createClient({
   autoConnect: true,
   connectors,
   provider,
-  webSocketProvider,
+  // webSocketProvider,
 });
 
 const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
@@ -83,23 +76,24 @@ const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}
-        showRecentTransactions={true}
-        appInfo={{
-          disclaimer: Disclaimer,
-        }}
-        // initialChain={chain.mainnet}
-        theme={{
-          lightMode: lightTheme(),
-          darkMode: darkTheme(),
-        }}
-      >
-        <ChakraProvider>
+    <ChakraProvider>
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider chains={chains}
+          showRecentTransactions={true}
+          appInfo={{
+            learnMoreUrl: 'https://........',
+            disclaimer: Disclaimer,
+          }}
+          // initialChain={chain.mainnet}
+          theme={{
+            lightMode: lightTheme(),
+            darkMode: darkTheme(),
+          }}
+        >
           <Component {...pageProps} />
-        </ChakraProvider>
-      </RainbowKitProvider>
-    </WagmiConfig >
+        </RainbowKitProvider>
+      </WagmiConfig >
+    </ChakraProvider>
   );
 }
 
