@@ -6,7 +6,10 @@ import {
   getDefaultWallets,
   connectorsForWallets,
   wallet,
-  DisclaimerComponent
+  DisclaimerComponent,
+  midnightTheme,
+  lightTheme,
+  darkTheme
 } from '@rainbow-me/rainbowkit';
 import {
   configureChains,
@@ -75,7 +78,12 @@ const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
+      <RainbowKitProvider appInfo={demoAppInfo} chains={chains}
+        theme={{
+          lightMode: lightTheme(),
+          darkMode: darkTheme(),
+        }}
+      >
         <ChakraProvider>
           <Component {...pageProps} />
         </ChakraProvider>
