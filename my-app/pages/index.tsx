@@ -15,6 +15,7 @@ import { Account } from '../components/Account';
 import { useIsMounted } from '../hooks/useIsMounted';
 import { NetworkSwitcher } from '../components/NetworkSwitcher';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import MyConnectButton from '../components/MyConnectButton';
 
 // export default function Home(): AppProps {
 export default function Home() {
@@ -97,7 +98,7 @@ export default function Home() {
   return (
     <Container maxW="container.xl" p={0}>
       {/* <MyHeader /> */}
-      <ConnectButton />
+      <MyConnectButton />
       <Divider p={5} />
       <Flex width="full" align="center" justifyContent="center">
         {/* <Flex h="100vh" py={10}> */}

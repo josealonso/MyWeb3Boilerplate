@@ -5,7 +5,8 @@ import {
   RainbowKitProvider,
   getDefaultWallets,
   connectorsForWallets,
-  wallet
+  wallet,
+  DisclaimerComponent
 } from '@rainbow-me/rainbowkit';
 import {
   configureChains,
@@ -64,12 +65,12 @@ const wagmiClient = createClient({
   webSocketProvider,
 });
 
-// const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
-//   <Text>
-//     Page created by
-//     <Link href='https://josealonso.github.io/About-Me/'> JR </Link>
-//   </Text>
-// );
+const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
+  <Text>
+    Page created by
+    <Link href='https://josealonso.github.io/About-Me/'> JR </Link>
+  </Text>
+);
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
