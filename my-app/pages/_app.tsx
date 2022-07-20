@@ -25,8 +25,15 @@ import { publicProvider } from 'wagmi/providers/public';
 
 const alchemyId = process.env.ALCHEMY_ID;
 const { chains, provider, webSocketProvider } = configureChains(
+  // [
+  //   jsonRpcProvider({
+  //     rpc: chain => ({
+  //       http: `http://localhost:8545`,  // chain.rpcUrls.default,
+  //     }),
+  //   }),
+  // ],
   [
-    chain.polygon, chain.polygonMumbai
+    chain.localhost, chain.polygon, chain.polygonMumbai
   ],
   [
     alchemyProvider({ alchemyId }),
@@ -77,8 +84,11 @@ const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider appInfo={demoAppInfo} chains={chains}
+      <RainbowKitProvider chains={chains}
         showRecentTransactions={true}
+        appInfo={{
+          disclaimer: Disclaimer,
+        }}
         // initialChain={chain.mainnet}
         theme={{
           lightMode: lightTheme(),
@@ -89,7 +99,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </ChakraProvider>
       </RainbowKitProvider>
-    </WagmiConfig>
+    </WagmiConfig >
   );
 }
 
