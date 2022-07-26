@@ -1,27 +1,25 @@
-// SPDX-License-Identifier: GPL
-// Author: JR Alonso
+// SPDX-License-Identifier: MIT
+// Based on OpenZeppelin token/ERC20/presets/ERC20PresetFixedSupply.sol and token/ERC20/extensions/ERC20Capped.sol
+// @author JRAlonso
 
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
-import "./GenericToken.sol";
+import "./MyERC20Template.sol";
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+contract MyToken {
+    constructor() {}
 
-contract MyToken is ERC20 {
-    constructor(
-        string memory name,
-        string memory symbol,
-        uint256 supply
-    )
-        ERC20(name, symbol)
-    {
-        _mint(msg.sender, supply);
-
-        // new GenericToken(name, symbol, supply);
-    }
-
-    function getAddress() public view returns (address) {
-        return address(this);
+    /**
+     * @dev Deploys a {ERC20} customized contract, so that
+     *
+     *  - name, symbol and supply are parameters
+     */
+    function createToken(
+        string memory name_,
+        string memory symbol_,
+        uint256 supply_
+    ) public {
+        MyERC20Template myERC20Token = new MyERC20Template();
+        myERC20Token.createToken(name_, symbol_, supply_);
     }
 }
