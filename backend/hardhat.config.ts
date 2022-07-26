@@ -17,6 +17,8 @@ const config: HardhatUserConfig = {
     mumbai: {
       url: process.env.ALCHEMY_ID || "",
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 35000000000,
+      // saveDeployments: true,
     }
   },
   gasReporter: {
