@@ -88,14 +88,21 @@ export default function Home() {
       const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
       const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
       // setLoading(true);
-      const tx = await tokenContract.createToken(NAME, SYMBOL, amount, { gasLimit: 3000000 });
+      const tx = await tokenContract.createToken(NAME, SYMBOL, amount, { gasLimit: calculateGasLimit() });
       await tx.wait();
+      // const gasEstimated = await tokenContract.createToken().fe estimateGas;  // .estimateGas.register(hashedDomain, walletAddress);
 
       setLoading(false);
       alert("Solidity function called successfully !!");
       console.log("El AAA es: ", tx);
     } catch (error) {
       console.log("Error: ", error);
+    }
+
+    function calculateGasLimit(): number {
+      const provider = ethers.getDefaultProvider();
+      // let maxFeeInWei = (await provider.getFeeData()).maxFeePerGas.mul(gasLimit)
+      return 3000000;
     }
     // <>
     //   <Connect />
