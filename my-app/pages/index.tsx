@@ -16,14 +16,15 @@ import { useIsMounted } from '../hooks/useIsMounted';
 import { NetworkSwitcher } from '../components/NetworkSwitcher';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import MyConnectButton from '../components/MyConnectButton';
+import { textSpanContainsPosition } from 'typescript';
 
 // export default function Home(): AppProps {
 export default function Home() {
-  const NAME = "Pessate";
-  const SYMBOL = "PSST";
-  const SUPPLY = ethers.BigNumber.from("3000");
-  const CONTRACT_ADDRESS = "0x7EbF7C10dBF69CC1d82ed0EA0B499456f2746C73";  // <--- mumbai   contractAddress;
-  const ABI = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [{ "internalType": "string", "name": "name_", "type": "string" }, { "internalType": "string", "name": "symbol_", "type": "string" }, { "internalType": "uint256", "name": "supply_", "type": "uint256" }], "name": "createToken", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "transferToUser", "outputs": [], "stateMutability": "nonpayable", "type": "function" }];
+  const NAME = "Largas";
+  const SYMBOL = "LRG";
+  const SUPPLY = 3000;
+  const CONTRACT_ADDRESS = "0x57BDAc09E0f9Ad73F7ffF3288C4Cf5973CF8D19f";  // <--- mumbai TokensFactory 27-July-2022  contractAddress;
+  const ABI = [{ "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "newAddress", "type": "address" }], "name": "newContract", "type": "event" }, { "inputs": [{ "internalType": "string", "name": "name_", "type": "string" }, { "internalType": "string", "name": "symbol_", "type": "string" }, { "internalType": "uint256", "name": "supply_", "type": "uint256" }], "name": "createToken", "outputs": [], "stateMutability": "nonpayable", "type": "function" }];
   const isMounted = useIsMounted();
   const { isConnected } = useAccount();
 
@@ -39,15 +40,20 @@ export default function Home() {
     symbol: ""
   });
 
+  const toWei = (amountInEthers: number) => ethers.utils.parseEther(amountInEthers.toString());
+  const toEthers = (amountInWeis: BigNumber) => ethers.utils.formatEther(amountInWeis);
+
   const passData = (data2) => {
     setChildData(data2);
+    testing();
     mintTokens(data2);
     // alert(`Data from the Child component: ${childData.name} AND ${childData.symbol}`);
   }
 
   const mintTokens = (data: any) => {
     console.log("MINTING: ", data);
-    callContractFunction();
+    createToken();
+    // testing();
     // alert("Tokens have been minted !!",);
     // TODO --> check if the supply is "" and convert it to a number
     // return (  // Useless
@@ -68,17 +74,22 @@ export default function Home() {
   //   return signer;  // provider;
   // }
 
-  async function callContractFunction() {
+  function testing() {
+    // let wei = toWei(SUPPLY.toString());
+    let wei = ethers.BigNumber.from("3000");
+    console.log("CONVERTED: ", wei);
+  }
+
+  async function createToken() {
     try {
       // const signer = await getSignerOrProvider();
-      const provider=new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
+      console.log("    ======================= N A M E  is: ", childData.name);
+      let amount = toWei(SUPPLY);
+      const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
       const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
-      // const tx = tokenContract.functions['withdraw()'];
       // setLoading(true);
-      const tx = await tokenContract.createToken(NAME, SYMBOL, SUPPLY, { gasLimit: 100000 });
+      const tx = await tokenContract.createToken(NAME, SYMBOL, amount, { gasLimit: 3000000 });
       await tx.wait();
-      // tokenContract.
-      // const unlockTime = tokenContract.unlockTime;   // unlockTime ------> It reverts
 
       setLoading(false);
       alert("Solidity function called successfully !!");
@@ -98,6 +109,38 @@ export default function Home() {
     //   </>
 
   };
+
+  async function importToken() {
+    const tokenAddress = '0xd00981105e61274c8a5cd5a88fe7e037d935b513';
+    const tokenSymbol = 'TUT';
+    const tokenDecimals = 18;
+    const tokenImage = 'http://placekitten.com/200/300';
+    const { ethereum } = window as any;
+
+    try {
+      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+      const wasAdded = await ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20', // Initially only supports ERC20, but eventually more!
+          options: {
+            address: tokenAddress, // The address that the token is at.
+            symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+            decimals: tokenDecimals, // The number of decimals in the token
+            image: tokenImage, // A string url of the token logo
+          },
+        },
+      });
+
+      if (wasAdded) {
+        console.log('The token has been imported');
+      } else {
+        console.log('The token COULD NOT be imported');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <Container maxW="container.xl" p={0}>
