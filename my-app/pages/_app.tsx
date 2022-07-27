@@ -27,7 +27,7 @@ import { publicProvider } from 'wagmi/providers/public';
 export const { chains, provider, webSocketProvider } = configureChains(
   // If a user has their wallet connected to a chain that is unsupported by your app, the provider will use the first chain listed in the chains array.
   [
-    chain.hardhat, chain.polygon, chain.polygonMumbai
+    chain.polygonMumbai, chain.hardhat, chain.polygon, 
   ],
   [
     alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }),

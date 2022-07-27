@@ -3,7 +3,7 @@ import { AppProps } from 'next/app';
 import AddTxButton from '../components/AddTxButton';
 import MyFooter from '../components/MyFooter';
 import MyHeader from '../components/MyHeader';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import TokenForm from '../components/TokenForm';
 import { MyToken } from '../../backend/typechain-types/MyToken';
 import { Contract } from 'ethers';
@@ -21,14 +21,14 @@ import MyConnectButton from '../components/MyConnectButton';
 export default function Home() {
   const NAME = "Pessate";
   const SYMBOL = "PSST";
-  const SUPPLY = 230000;
-  const CONTRACT_ADDRESS = contractAddress;
+  const SUPPLY = ethers.BigNumber.from("3000");
+  const CONTRACT_ADDRESS = "0x7EbF7C10dBF69CC1d82ed0EA0B499456f2746C73";  // <--- mumbai   contractAddress;
   const ABI = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [{ "internalType": "string", "name": "name_", "type": "string" }, { "internalType": "string", "name": "symbol_", "type": "string" }, { "internalType": "uint256", "name": "supply_", "type": "uint256" }], "name": "createToken", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "transferToUser", "outputs": [], "stateMutability": "nonpayable", "type": "function" }];
   const isMounted = useIsMounted();
   const { isConnected } = useAccount();
 
   const { data: signer, isError, isLoading } = useSigner();
-  const provider = useProvider();
+  const provider2 = useProvider();
 
   // loading is set to true when we are waiting for a transaction to get mined
   const [loading, setLoading] = useState(false);
@@ -71,10 +71,11 @@ export default function Home() {
   async function callContractFunction() {
     try {
       // const signer = await getSignerOrProvider();
+      const provider=new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
       const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
       // const tx = tokenContract.functions['withdraw()'];
       // setLoading(true);
-      const tx = await tokenContract.createToken(NAME, SYMBOL, SUPPLY);
+      const tx = await tokenContract.createToken(NAME, SYMBOL, SUPPLY, { gasLimit: 100000 });
       await tx.wait();
       // tokenContract.
       // const unlockTime = tokenContract.unlockTime;   // unlockTime ------> It reverts
