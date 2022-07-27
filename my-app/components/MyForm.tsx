@@ -19,7 +19,7 @@ const MyForm = () => {
 
         setData(data);
     };
-    console.log(data);
+    console.log("Form component ---> ", data);
     console.log(errors);
 
     return (

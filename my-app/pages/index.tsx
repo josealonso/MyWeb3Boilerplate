@@ -16,7 +16,6 @@ import { useIsMounted } from '../hooks/useIsMounted';
 import { NetworkSwitcher } from '../components/NetworkSwitcher';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import MyConnectButton from '../components/MyConnectButton';
-import { textSpanContainsPosition } from 'typescript';
 
 // export default function Home(): AppProps {
 export default function Home() {
@@ -37,7 +36,8 @@ export default function Home() {
   // let parentTokenData: TokenData = { name: "", symbol: "", supply: "" };
   const [childData, setChildData] = useState({
     name: "",
-    symbol: ""
+    symbol: "",
+    supply: ""
   });
 
   const toWei = (amountInEthers: number) => ethers.utils.parseEther(amountInEthers.toString());
@@ -45,22 +45,17 @@ export default function Home() {
 
   const passData = (data2) => {
     setChildData(data2);
-    testing();
-    mintTokens(data2);
-    // alert(`Data from the Child component: ${childData.name} AND ${childData.symbol}`);
+    // testing();
+    let {name, symbol, supply} = setTokenParameters(data2);
+    createToken(name, symbol, supply);
   }
 
-  const mintTokens = (data: any) => {
+  function setTokenParameters(data: any): { name: string, symbol: string, supply: number } {
     console.log("MINTING: ", data);
-    createToken();
-    // testing();
-    // alert("Tokens have been minted !!",);
-    // TODO --> check if the supply is "" and convert it to a number
-    // return (  // Useless
-    //   <Box>
-    //     Tokens have been minted !!
-    //   </Box>
-    // )
+    let name = childData.name;
+    let symbol = childData.symbol;
+    let supply = childData.supply === "" ? 100000 : parseInt(childData.supply);
+    return { name: name, symbol: symbol, supply: supply };
   }
 
   /*
@@ -75,16 +70,14 @@ export default function Home() {
   // }
 
   function testing() {
-    // let wei = toWei(SUPPLY.toString());
     let wei = ethers.BigNumber.from("3000");
     console.log("CONVERTED: ", wei);
   }
 
-  async function createToken() {
+  async function createToken(name: string, symbol: string, supply: number) {
     try {
       // const signer = await getSignerOrProvider();
-      console.log("    ======================= N A M E  is: ", childData.name);
-      let amount = toWei(SUPPLY);
+      let amount = toWei(supply);
       const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
       const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
       // setLoading(true);
