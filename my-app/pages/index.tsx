@@ -5,12 +5,12 @@ import MyFooter from '../components/MyFooter';
 import MyHeader from '../components/MyHeader';
 import { BigNumber } from 'ethers';
 import TokenForm from '../components/TokenForm';
-import { LockInterface, Lock } from '../../backend/typechain-types/Lock';
+import { MyToken } from '../../backend/typechain-types/MyToken';
 import { Contract } from 'ethers';
 import { useState } from 'react';
 import { contractAddress, contractABI } from '../configs/contract';
 import { Connect } from '../components/Connect';
-import { useAccount, useProvider, useSigner } from 'wagmi';
+import { useAccount, useProvider, useSigner, erc20ABI } from 'wagmi';
 import { Account } from '../components/Account';
 import { useIsMounted } from '../hooks/useIsMounted';
 import { NetworkSwitcher } from '../components/NetworkSwitcher';
@@ -19,9 +19,11 @@ import MyConnectButton from '../components/MyConnectButton';
 
 // export default function Home(): AppProps {
 export default function Home() {
-
+  const NAME = "Pessate";
+  const SYMBOL = "PSST";
+  const SUPPLY = 230000;
   const CONTRACT_ADDRESS = contractAddress;
-  const ABI = contractABI;
+  const ABI = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [{ "internalType": "string", "name": "name_", "type": "string" }, { "internalType": "string", "name": "symbol_", "type": "string" }, { "internalType": "uint256", "name": "supply_", "type": "uint256" }], "name": "createToken", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "transferToUser", "outputs": [], "stateMutability": "nonpayable", "type": "function" }];
   const isMounted = useIsMounted();
   const { isConnected } = useAccount();
 
@@ -69,16 +71,17 @@ export default function Home() {
   async function callContractFunction() {
     try {
       // const signer = await getSignerOrProvider();
-      const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as unknown as Lock;
+      const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
       // const tx = tokenContract.functions['withdraw()'];
       // setLoading(true);
-      const tx = await tokenContract.withdraw();
+      const tx = await tokenContract.createToken(NAME, SYMBOL, SUPPLY);
       await tx.wait();
-      const unlockTime = tokenContract.unlockTime;   // unlockTime ------> It reverts
+      // tokenContract.
+      // const unlockTime = tokenContract.unlockTime;   // unlockTime ------> It reverts
 
       setLoading(false);
       alert("Solidity function called successfully !!");
-      console.log("El AAA es: ", unlockTime);
+      console.log("El AAA es: ", tx);
     } catch (error) {
       console.log("Error: ", error);
     }

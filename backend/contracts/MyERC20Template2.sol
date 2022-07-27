@@ -43,7 +43,7 @@ import "./Context.sol";
  *  - Preminted total supply
  *  - No access control mechanism (for minting/pausing) and hence no governance
  */
-contract MyERC20Template is Context, IERC20 {
+contract MyERC20Template2 is Context, IERC20 {
     mapping(address => uint256) private _balances;
 
     mapping(address => mapping(address => uint256)) private _allowances;
@@ -71,11 +71,12 @@ contract MyERC20Template is Context, IERC20 {
         _name = name_;
         _symbol = symbol_;
         mint(_msgSender(), supply_);
+        // mint(msg.sender, supply_);
         _canMint = false;
     }
 
     function mint(address account, uint256 amount) public {
-        _mint(_msgSender(), amount);
+        _mint(account, amount);
     }
 
     /**

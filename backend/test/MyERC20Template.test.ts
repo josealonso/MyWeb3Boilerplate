@@ -51,6 +51,18 @@ describe("MyERC20Template", function () {
         "All the tokens have been minted"
       );
     });
+
+    it("Should transfer all the tokens to the EOA", async function () {
+      const { myERC20Template, owner, otherAccount } = await loadFixture(deployMyERC20TemplateFixture);
+      expect(await myERC20Template.balanceOf(owner.address)).to.equal(0);
+      await myERC20Template.connect(owner).createToken(NAME, SYMBOL, SUPPLY);
+      let totalSupply = await myERC20Template.totalSupply();
+      expect(await myERC20Template.balanceOf(owner.address)).to.equal(ethers.BigNumber.from(totalSupply));
+      await myERC20Template.connect(owner).transfer(otherAccount.address, SUPPLY);
+      expect(await myERC20Template.balanceOf(otherAccount.address)).to.equal(SUPPLY);
+      expect(await myERC20Template.balanceOf(owner.address)).to.equal(ethers.BigNumber.from(0));
+      // await expect(myERC20Template.mint(owner.address, AMOUNT)).to.be.revertedWith("All the tokens have been minte");
+    });
   });
 
 });
