@@ -66,7 +66,7 @@ export default function Home() {
         method: "wallet_addEthereumChain",
         params: [
           {
-            chainId: '137',   // wrong id
+            chainId: '0x13881',  
             chainName: chainName,
             rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
             nativeCurrency: {
