@@ -10,7 +10,7 @@ import { Contract } from 'ethers';
 import { useState } from 'react';
 import { contractAddress, contractABI } from '../configs/contract';
 import { Connect } from '../components/Connect';
-import { chain, useAccount, useContractWrite, useProvider, useSigner, useSwitchNetwork } from 'wagmi';
+import { chain, useAccount, useContractWrite, useProvider, useSigner } from 'wagmi';
 import { Account } from '../components/Account';
 import { useIsMounted } from '../hooks/useIsMounted';
 import { NetworkSwitcher } from '../components/NetworkSwitcher';
@@ -49,38 +49,12 @@ export default function Home() {
     setChildData(data2);
     // testing();
     // make sure the wallet is connected to the Mumbai network
-    addNetwork("mumbai", 18);
+    // addNetwork("mumbai", 18);
     let { name, symbol, supply } = setTokenParameters(data2);
     isReadyToCreateToken = true;
     // createToken(name, symbol, supply);
 
     // TODO ---> notify the tx is in progress
-  }
-
-  async function addNetwork(chainName: string, tokenDecimals: number) {
-    // const tokenDecimals = 18;
-    const { ethereum } = window as any;
-
-    try {
-      await ethereum.request({
-        method: "wallet_addEthereumChain",
-        params: [
-          {
-            chainId: '0x13881',  
-            chainName: chainName,
-            rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
-            nativeCurrency: {
-              name: "MATIC",
-              symbol: "MATIC",
-              decimals: tokenDecimals,
-            },
-            blockExplorerUrls: ["https://mumbai.polygonscan.com"],
-          },
-        ],
-      });
-    } catch (error) {
-      console.error("error adding ", chainName, " network");
-    }
   }
 
   function setTokenParameters(data: any): { name: string, symbol: string, supply: number } {
@@ -187,6 +161,7 @@ export default function Home() {
     <Container maxW="container.xl" p={0}>
       {/* <MyHeader /> */}
       <MyConnectButton />
+      <NetworkSwitcher />
       <Divider p={5} />
       <Flex width="full" align="center" justifyContent="center">
         {/* <Flex h="100vh" py={10}> */}

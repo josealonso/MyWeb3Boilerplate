@@ -20,6 +20,7 @@ import {
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
+import { providers } from 'ethers';
 
 // import { avalancheChain } from '../constants';
 // import '../styles/globals.css'
@@ -27,7 +28,7 @@ import { publicProvider } from 'wagmi/providers/public';
 export const { chains, provider, webSocketProvider } = configureChains(
   // If a user has their wallet connected to a chain that is unsupported by your app, the provider will use the first chain listed in the chains array.
   [
-    chain.polygonMumbai, chain.hardhat, chain.polygon, 
+    chain.polygonMumbai, // chain.hardhat, chain.polygon,
   ],
   [
     alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }),
@@ -64,12 +65,15 @@ const wagmiClient = createClient({
   autoConnect: true,
   connectors,
   provider,
+  // provider(config) {
+  //   return new providers.AlchemyProvider(config.chainId, process.env.ALCHEMY_ID)
+  // },
   // webSocketProvider,
 });
 
 const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
   <Text>
-    Page created by
+    App created by
     <Link href='https://josealonso.github.io/About-Me/'> JR </Link>
   </Text>
 );
