@@ -12,7 +12,7 @@ const config: HardhatUserConfig = {
       // forking: {
       //   url: process.env.MUMBAI_API_KEY_URL || "",
       // },
-      // chainId: 1337
+      chainId: 1337   // We set 1337 to make interacting with MetaMask simpler
     },
     mumbai: {
       url: process.env.ALCHEMY_ID || "",

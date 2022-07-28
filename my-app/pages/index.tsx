@@ -10,7 +10,7 @@ import { Contract } from 'ethers';
 import { useState } from 'react';
 import { contractAddress, contractABI } from '../configs/contract';
 import { Connect } from '../components/Connect';
-import { useAccount, useProvider, useSigner, erc20ABI } from 'wagmi';
+import { chain, useAccount, useContractWrite, useProvider, useSigner, useSwitchNetwork } from 'wagmi';
 import { Account } from '../components/Account';
 import { useIsMounted } from '../hooks/useIsMounted';
 import { NetworkSwitcher } from '../components/NetworkSwitcher';
@@ -29,7 +29,7 @@ export default function Home() {
 
   const { data: signer, isError, isLoading } = useSigner();
   const provider2 = useProvider();
-
+  let isReadyToCreateToken = false;
   // loading is set to true when we are waiting for a transaction to get mined
   const [loading, setLoading] = useState(false);
 
@@ -43,11 +43,44 @@ export default function Home() {
   const toWei = (amountInEthers: number) => ethers.utils.parseEther(amountInEthers.toString());
   const toEthers = (amountInWeis: BigNumber) => ethers.utils.formatEther(amountInWeis);
 
-  const passData = (data2) => {
+  // alert("STARTING..... !!");
+
+  const passData = (data2: any) => {
     setChildData(data2);
     // testing();
-    let {name, symbol, supply} = setTokenParameters(data2);
-    createToken(name, symbol, supply);
+    // make sure the wallet is connected to the Mumbai network
+    addNetwork("mumbai", 18);
+    let { name, symbol, supply } = setTokenParameters(data2);
+    isReadyToCreateToken = true;
+    // createToken(name, symbol, supply);
+
+    // TODO ---> notify the tx is in progress
+  }
+
+  async function addNetwork(chainName: string, tokenDecimals: number) {
+    // const tokenDecimals = 18;
+    const { ethereum } = window as any;
+
+    try {
+      await ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [
+          {
+            chainId: '137',   // wrong id
+            chainName: chainName,
+            rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
+            nativeCurrency: {
+              name: "MATIC",
+              symbol: "MATIC",
+              decimals: tokenDecimals,
+            },
+            blockExplorerUrls: ["https://mumbai.polygonscan.com"],
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("error adding ", chainName, " network");
+    }
   }
 
   function setTokenParameters(data: any): { name: string, symbol: string, supply: number } {
@@ -70,45 +103,53 @@ export default function Home() {
   // }
 
   function testing() {
-    let wei = ethers.BigNumber.from("3000");
-    console.log("CONVERTED: ", wei);
+    console.log("CONVERTED: ");
   }
 
   async function createToken(name: string, symbol: string, supply: number) {
-    try {
-      // const signer = await getSignerOrProvider();
-      let amount = toWei(supply);
-      const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
-      const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
-      // setLoading(true);
-      const tx = await tokenContract.createToken(NAME, SYMBOL, amount, { gasLimit: calculateGasLimit() });
-      await tx.wait();
-      // const gasEstimated = await tokenContract.createToken().fe estimateGas;  // .estimateGas.register(hashedDomain, walletAddress);
+    let amount = toWei(supply);
 
-      setLoading(false);
-      alert("Solidity function called successfully !!");
-      console.log("El AAA es: ", tx);
-    } catch (error) {
-      console.log("Error: ", error);
-    }
+    // const contractWrite = useContractWrite({
+    //   addressOrName: CONTRACT_ADDRESS,
+    //   contractInterface: ABI,
+    //   chainId: 80001,
+    //   functionName: 'createToken',
+    //   args: [name, symbol, amount],
+    // overrides: {
+    //   gasLimit: calculateGasLimit(),
+    // },
+    //   onSuccess(data) {
+    //     console.log('Success calling createToken ', data)
+    //   },
+    //   onError(error) {
+    //     console.log(' ========= Error calling createToken ', error)
+    //   },
+    // })
 
-    function calculateGasLimit(): number {
-      const provider = ethers.getDefaultProvider();
-      // let maxFeeInWei = (await provider.getFeeData()).maxFeePerGas.mul(gasLimit)
-      return 3000000;
-    }
-    // <>
-    //   <Connect />
-    //   <>
-    //     {isMounted && isConnected && (
-    //       <>
-    //         <Account />
-    //         <NetworkSwitcher />
-    //       </>
-    //     )}
-    //   </>
+    // const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
+    // const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
+    // const tx = await tokenContract.createToken(name, symbol, amount, { gasLimit: calculateGasLimit() });
+    // await tx.wait();
 
-  };
+    // alert("Solidity function called successfully !!");
+    // console.log("El AAA es: ", tx);
+  }
+
+  function calculateGasLimit(): number {
+    const provider = ethers.getDefaultProvider();
+    // let maxFeeInWei = (await provider.getFeeData()).maxFeePerGas.mul(gasLimit)
+    return 3000000;
+  }
+  // <>
+  //   <Connect />
+  //   <>
+  //     {isMounted && isConnected && (
+  //       <>
+  //         <Account />
+  //         <NetworkSwitcher />
+  //       </>
+  //     )}
+  //   </>
 
   async function importToken() {
     const tokenAddress = '0xd00981105e61274c8a5cd5a88fe7e037d935b513';
@@ -154,7 +195,13 @@ export default function Home() {
           Data from the Child component: {childData.name} AND {childData.symbol}
           AND {childData.supply}
         </Text>
+        {isReadyToCreateToken ?
+          (<div>
+            <Text>READY</Text>
+          </div>
+          ) : ''}
       </Flex>
     </Container>
   )
+
 }
