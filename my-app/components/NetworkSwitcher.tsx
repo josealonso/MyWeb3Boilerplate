@@ -1,5 +1,5 @@
 import { useAccount, useEnsName, useNetwork, useSwitchNetwork } from "wagmi";
-import { Text } from "@chakra-ui/react";
+import { Text, ModalCloseButton, Alert, AlertIcon, AlertTitle, AlertDescription, Box } from "@chakra-ui/react";
 
 const MUMBAI_ID = 80001;
 export function NetworkSwitcher() {
@@ -17,16 +17,24 @@ export function NetworkSwitcher() {
     //     useSwitchNetwork();
 
     return (
-        <div>
+        <Box padding="0.5rem">
             {isMumbaiNetwork ?
                 (
-                    <Text>Already connected to the Mumbai chain</Text>
+                    <Alert status='success'>
+                        <AlertIcon />
+                        Connected to the Mumbai chain. You can continue.
+                    </Alert>
                 ) :
                 (
-                    <Text>Not connected</Text>
+                    <Alert status='error'>
+                        <AlertIcon />
+                        <AlertTitle>Not connected to the Mumbai chain!</AlertTitle>
+                        <AlertDescription>Press on the above button to connect to the Mumbai chain.</AlertDescription>
+                    </Alert>
+
                 )
             }
-        </div >
+        </Box >
     )
 }
     //     < div >

@@ -1,21 +1,24 @@
+import { Box } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 // export default function AddTxButton() {
 export default function MyConnectButton() {
     return (
-        <ConnectButton label="Connect wallet"
-            accountStatus={{
-                smallScreen: "avatar",
-                largeScreen: "full",
-            }}
-            chainStatus={{
-                smallScreen: "icon",
-                largeScreen: "full",
-            }}
-            showBalance={{
-                smallScreen: false,
-                largeScreen: true,
-            }} />
+        <Box padding="1.5rem">
+            <ConnectButton label="Connect wallet"
+                accountStatus={{
+                    smallScreen: "avatar",
+                    largeScreen: "full",
+                }}
+                chainStatus={{
+                    smallScreen: "icon",
+                    largeScreen: "full",
+                }}
+                showBalance={{
+                    smallScreen: false,
+                    largeScreen: true,
+                }} />
+        </Box>
     );
 };
 
