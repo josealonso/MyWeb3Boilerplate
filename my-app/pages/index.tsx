@@ -1,4 +1,4 @@
-import { Box, Container, Divider, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Container, Divider, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import create from 'zustand';
 import AddTxButton from '../components/AddTxButton';
@@ -10,13 +10,12 @@ import { MyToken } from '../../backend/typechain-types/MyToken';
 import { Contract } from 'ethers';
 import { ConsumerProps, createContext, useContext, useState } from 'react';
 import { contractAddress, contractABI } from '../configs/contract';
-import { Connect } from '../components/Connect';
 import { chain, useAccount, useContractWrite, useNetwork, useProvider, useSigner } from 'wagmi';
 import { Account } from '../components/Account';
 import { useIsMounted } from '../hooks/useIsMounted';
 import { isMumbaiNetwork, MUMBAI_ID, NetworkSwitcher } from '../components/NetworkSwitcher';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import MyConnectButton from '../components/MyConnectButton';
+import SuccessMessage from '../components/SuccessMessage';
 
 // export default function Home(props: ConsumerProps<Boolean>) {
 export default function Home() {
@@ -29,9 +28,11 @@ export default function Home() {
   const { isConnected } = useAccount();
   const { data: signer, isError, isLoading } = useSigner();
   const provider2 = useProvider();
-  let isReadyToCreateToken = false;
+  const [areTokensCreated, setAreTokensCreated] = useState(false);
   // loading is set to true when we are waiting for a transaction to get mined
   const [loading, setLoading] = useState(false);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   // let parentTokenData: TokenData = { name: "", symbol: "", supply: "" };
   const [childData, setChildData] = useState({
@@ -48,12 +49,8 @@ export default function Home() {
   const passData = (data2: any) => {
     setChildData(data2);
     // make sure the wallet is connected to the Mumbai network
-    // addNetwork("mumbai", 18);
     let { name, symbol, supply } = setTokenParameters(data2);
-    isReadyToCreateToken = true;
-    // createToken(name, symbol, supply);
-
-    // TODO ---> notify the tx is in progress
+    createToken(name, symbol, supply);
   }
 
   function setTokenParameters(data: any): { name: string, symbol: string, supply: number } {
@@ -99,13 +96,23 @@ export default function Home() {
     //   },
     // })
 
-    // const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
-    // const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
-    // const tx = await tokenContract.createToken(name, symbol, amount, { gasLimit: calculateGasLimit() });
-    // await tx.wait();
+    const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
+    const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
+    const tx = await tokenContract.createToken(name, symbol, amount, { gasLimit: calculateGasLimit() });
+    showWaitingMessage(tx);
+    // let st= ""; st= tx.blockHash;
+    // tx.data;
+    console.log("The hash for the tx is: ", tx.blockHash);
+    setAreTokensCreated(true);
+    // importToken(tokenAddress);
+    console.log("El AAA es: ", tx);
+  }
 
-    // alert("Solidity function called successfully !!");
-    // console.log("El AAA es: ", tx);
+  async function showWaitingMessage(tx: any) {
+    const NUM_OF_CONFIRMATIONS = 2;
+    setLoading(true);
+    await tx.wait(NUM_OF_CONFIRMATIONS);
+    setLoading(false);
   }
 
   function calculateGasLimit(): number {
@@ -113,21 +120,9 @@ export default function Home() {
     // let maxFeeInWei = (await provider.getFeeData()).maxFeePerGas.mul(gasLimit)
     return 3000000;
   }
-  // <>
-  //   <Connect />
-  //   <>
-  //     {isMounted && isConnected && (
-  //       <>
-  //         <Account />
-  //         <NetworkSwitcher />
-  //       </>
-  //     )}
-  //   </>
 
-  async function importToken() {
-    const tokenAddress = '0xd00981105e61274c8a5cd5a88fe7e037d935b513';
-    const tokenSymbol = 'TUT';
-    const tokenDecimals = 18;
+  async function importToken(tokenAddress: string, tokenSymbol: string, tokenDecimals = 18) {
+    // const tokenAddress = '0xd00981105e61274c8a5cd5a88fe7e037d935b513';
     const tokenImage = 'http://placekitten.com/200/300';
     const { ethereum } = window as any;
 
@@ -162,6 +157,11 @@ export default function Home() {
       <MyConnectButton />
       <NetworkSwitcher />
       <Divider p={5} />
+      <SuccessMessage />
+      <>
+        {/* <Button>Botón</Button> */}
+      </>
+
       {isMumbaiNetwork ?
         (
           < Flex width="full" align="center" justifyContent="center">
@@ -171,11 +171,20 @@ export default function Home() {
               Data from the Child component: {childData.name} AND {childData.symbol}
               AND {childData.supply}
             </Text>
-            {isReadyToCreateToken ?
-              (<div>
-                <Text>READY</Text>
-              </div>
-              ) : ''}
+            {loading ?
+              (
+                <Box>
+                  <Text>Transaction in progress</Text>
+                  <Spinner label='Transaction in progress' color='red.500' />
+                </Box>
+              ) : ''
+            }
+            {
+              areTokensCreated && !loading ?
+                (
+                  <SuccessMessage />
+                ) : ''
+            }
           </Flex>
         ) : ''
       }
