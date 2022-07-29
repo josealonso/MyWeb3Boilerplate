@@ -1,18 +1,27 @@
 import { useAccount, useEnsName, useNetwork, useSwitchNetwork } from "wagmi";
-import { Text, ModalCloseButton, Alert, AlertIcon, AlertTitle, AlertDescription, Box } from "@chakra-ui/react";
+import { Text, Alert, AlertIcon, AlertTitle, AlertDescription, Box } from "@chakra-ui/react";
+import create from 'zustand';
+import { createContext, ProviderProps, useState } from "react";
 
-const MUMBAI_ID = 80001;
-export function NetworkSwitcher() {
-    let isMumbaiNetwork = false;
+const ChainContext = createContext(false);
+
+export let isMumbaiNetwork = false;
+export const MUMBAI_ID = 80001;
+export function NetworkSwitcher() { // (props: ProviderProps<Boolean>) {
+
     const { chain } = useNetwork();
+    // let [isMumbaiNetwork, setIsMumbaiNetwork] = useState(false);
     console.log("chain.id", chain?.id);
     if (chain?.id === MUMBAI_ID) {
         console.log("IT is MUMBAI already --------------");
+        // setIsMumbaiNetwork(chain?.id === MUMBAI_ID); // Error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
         isMumbaiNetwork = true;
     }
 
 
-
+    // function chainStatus() {
+    //     return props.value;
+    // }
     // const { chains, error, isLoading, pendingChainId, switchNetwork } =
     //     useSwitchNetwork();
 
@@ -20,10 +29,12 @@ export function NetworkSwitcher() {
         <Box padding="0.5rem">
             {isMumbaiNetwork ?
                 (
-                    <Alert status='success'>
-                        <AlertIcon />
-                        Connected to the Mumbai chain. You can continue.
-                    </Alert>
+                    <>
+                        <Alert status='success'>
+                            <AlertIcon />
+                            Connected to the Mumbai chain. You can continue.
+                        </Alert>
+                    </>
                 ) :
                 (
                     <Alert status='error'>

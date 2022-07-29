@@ -1,5 +1,6 @@
 import { Box, Container, Divider, Flex, Text } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
+import create from 'zustand';
 import AddTxButton from '../components/AddTxButton';
 import MyFooter from '../components/MyFooter';
 import MyHeader from '../components/MyHeader';
@@ -7,17 +8,17 @@ import { BigNumber, ethers } from 'ethers';
 import TokenForm from '../components/TokenForm';
 import { MyToken } from '../../backend/typechain-types/MyToken';
 import { Contract } from 'ethers';
-import { useState } from 'react';
+import { ConsumerProps, createContext, useContext, useState } from 'react';
 import { contractAddress, contractABI } from '../configs/contract';
 import { Connect } from '../components/Connect';
-import { chain, useAccount, useContractWrite, useProvider, useSigner } from 'wagmi';
+import { chain, useAccount, useContractWrite, useNetwork, useProvider, useSigner } from 'wagmi';
 import { Account } from '../components/Account';
 import { useIsMounted } from '../hooks/useIsMounted';
-import { NetworkSwitcher } from '../components/NetworkSwitcher';
+import { isMumbaiNetwork, MUMBAI_ID, NetworkSwitcher } from '../components/NetworkSwitcher';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import MyConnectButton from '../components/MyConnectButton';
 
-// export default function Home(): AppProps {
+// export default function Home(props: ConsumerProps<Boolean>) {
 export default function Home() {
   const NAME = "Largas";
   const SYMBOL = "LRG";
@@ -26,7 +27,6 @@ export default function Home() {
   const ABI = [{ "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "newAddress", "type": "address" }], "name": "newContract", "type": "event" }, { "inputs": [{ "internalType": "string", "name": "name_", "type": "string" }, { "internalType": "string", "name": "symbol_", "type": "string" }, { "internalType": "uint256", "name": "supply_", "type": "uint256" }], "name": "createToken", "outputs": [], "stateMutability": "nonpayable", "type": "function" }];
   const isMounted = useIsMounted();
   const { isConnected } = useAccount();
-
   const { data: signer, isError, isLoading } = useSigner();
   const provider2 = useProvider();
   let isReadyToCreateToken = false;
@@ -40,14 +40,13 @@ export default function Home() {
     supply: ""
   });
 
+  console.log("Inside HOME. ChainContext: ", isMumbaiNetwork);
+
   const toWei = (amountInEthers: number) => ethers.utils.parseEther(amountInEthers.toString());
   const toEthers = (amountInWeis: BigNumber) => ethers.utils.formatEther(amountInWeis);
 
-  // alert("STARTING..... !!");
-
   const passData = (data2: any) => {
     setChildData(data2);
-    // testing();
     // make sure the wallet is connected to the Mumbai network
     // addNetwork("mumbai", 18);
     let { name, symbol, supply } = setTokenParameters(data2);
@@ -163,20 +162,24 @@ export default function Home() {
       <MyConnectButton />
       <NetworkSwitcher />
       <Divider p={5} />
-      <Flex width="full" align="center" justifyContent="center">
-        {/* <Flex h="100vh" py={10}> */}
-        <TokenForm passData={passData} />
-        <Text>
-          Data from the Child component: {childData.name} AND {childData.symbol}
-          AND {childData.supply}
-        </Text>
-        {isReadyToCreateToken ?
-          (<div>
-            <Text>READY</Text>
-          </div>
-          ) : ''}
-      </Flex>
-    </Container>
+      {isMumbaiNetwork ?
+        (
+          < Flex width="full" align="center" justifyContent="center">
+            {/* <Flex h="100vh" py={10}> */}
+            <TokenForm passData={passData} />
+            <Text>
+              Data from the Child component: {childData.name} AND {childData.symbol}
+              AND {childData.supply}
+            </Text>
+            {isReadyToCreateToken ?
+              (<div>
+                <Text>READY</Text>
+              </div>
+              ) : ''}
+          </Flex>
+        ) : ''
+      }
+    </Container >
   )
 
 }
