@@ -7,6 +7,8 @@ const ChainContext = createContext(false);
 
 export let isMumbaiNetwork = false;
 export const MUMBAI_ID = 80001;
+// Make sure the wallet is connected to the Mumbai network.
+// If the wallet does not have that network, the wagmi library add it.
 export function NetworkSwitcher() { // (props: ProviderProps<Boolean>) {
 
     const { chain } = useNetwork();

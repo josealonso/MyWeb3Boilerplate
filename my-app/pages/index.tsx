@@ -22,17 +22,14 @@ export default function Home() {
   const NAME = "Largas";
   const SYMBOL = "LRG";
   const SUPPLY = 3000;
+  // Tokens Factory Contract Address
   const CONTRACT_ADDRESS = "0x57BDAc09E0f9Ad73F7ffF3288C4Cf5973CF8D19f";  // <--- mumbai TokensFactory 27-July-2022  contractAddress;
   const ABI = [{ "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "newAddress", "type": "address" }], "name": "newContract", "type": "event" }, { "inputs": [{ "internalType": "string", "name": "name_", "type": "string" }, { "internalType": "string", "name": "symbol_", "type": "string" }, { "internalType": "uint256", "name": "supply_", "type": "uint256" }], "name": "createToken", "outputs": [], "stateMutability": "nonpayable", "type": "function" }];
-  const isMounted = useIsMounted();
-  const { isConnected } = useAccount();
   const { data: signer, isError, isLoading } = useSigner();
   const provider2 = useProvider();
   const [areTokensCreated, setAreTokensCreated] = useState(false);
   // loading is set to true when we are waiting for a transaction to get mined
   const [loading, setLoading] = useState(false);
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   // let parentTokenData: TokenData = { name: "", symbol: "", supply: "" };
   const [childData, setChildData] = useState({
@@ -48,7 +45,6 @@ export default function Home() {
 
   const passData = (data2: any) => {
     setChildData(data2);
-    // make sure the wallet is connected to the Mumbai network
     let { name, symbol, supply } = setTokenParameters(data2);
     createToken(name, symbol, supply);
   }
@@ -96,16 +92,27 @@ export default function Home() {
     //   },
     // })
 
+    setInterval(() => {
+      ;
+    }, 2000);
+
     const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
     const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
     const tx = await tokenContract.createToken(name, symbol, amount, { gasLimit: calculateGasLimit() });
+    const txReceipt = await tx.wait();
+    // The token address is the parameter of the emitted event
+    console.log(txReceipt.events);
+    // @ts-ignore
+    let tokenAddress = txReceipt.events[0].args.newAddress;
+    // @ts-ignore
+    console.log("ADDRESS ==== ", txReceipt.events[0].args.newAddress);
+    console.log("ADDRESS ==== ", tokenAddress);
     showWaitingMessage(tx);
-    // let st= ""; st= tx.blockHash;
-    // tx.data;
-    console.log("The hash for the tx is: ", tx.blockHash);
+    // let tokenAddress = "0x4CE5C99E5A4479CC6144037902329295419962F4";
+    let tokenSymbol = "VLC";
+    // console.log("The hash for the tx is: ", tx.blockHash);
     setAreTokensCreated(true);
-    // importToken(tokenAddress);
-    console.log("El AAA es: ", tx);
+    importToken(tokenAddress, tokenSymbol);
   }
 
   async function showWaitingMessage(tx: any) {
@@ -157,10 +164,6 @@ export default function Home() {
       <MyConnectButton />
       <NetworkSwitcher />
       <Divider p={5} />
-      <SuccessMessage />
-      <>
-        {/* <Button>Botón</Button> */}
-      </>
 
       {isMumbaiNetwork ?
         (

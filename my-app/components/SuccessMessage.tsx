@@ -10,7 +10,7 @@ export default function SuccessMessage() {
 
     setInterval(() => {
         setIsModalOpen(false);
-    }, 2000);
+    }, 3000);
 
     return (
         <>
@@ -23,6 +23,7 @@ export default function SuccessMessage() {
                     <ModalCloseButton />
                     <ModalBody>
                         <Text>Your tokens have been minted!</Text>
+                        <Text>Let's make the token visible in your wallet</Text>
                     </ModalBody>
                     <ModalFooter>
                         {/* <Button onClick={onClose}>Close</Button> */}
