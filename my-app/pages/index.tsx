@@ -1,4 +1,4 @@
-import { Box, Button, Container, Divider, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spinner, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Container, Divider, Flex, Spinner, Text } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import create from 'zustand';
 import AddTxButton from '../components/AddTxButton';
@@ -10,18 +10,13 @@ import { MyToken } from '../../backend/typechain-types/MyToken';
 import { Contract } from 'ethers';
 import { ConsumerProps, createContext, useContext, useState } from 'react';
 import { contractAddress, contractABI } from '../configs/contract';
-import { chain, useAccount, useContractWrite, useNetwork, useProvider, useSigner } from 'wagmi';
-import { Account } from '../components/Account';
-import { useIsMounted } from '../hooks/useIsMounted';
+import { useProvider, useSigner } from 'wagmi';
 import { isMumbaiNetwork, MUMBAI_ID, NetworkSwitcher } from '../components/NetworkSwitcher';
 import MyConnectButton from '../components/MyConnectButton';
 import SuccessMessage from '../components/SuccessMessage';
 
 // export default function Home(props: ConsumerProps<Boolean>) {
 export default function Home() {
-  const NAME = "Largas";
-  const SYMBOL = "LRG";
-  const SUPPLY = 3000;
   // Tokens Factory Contract Address
   const CONTRACT_ADDRESS = "0x57BDAc09E0f9Ad73F7ffF3288C4Cf5973CF8D19f";  // <--- mumbai TokensFactory 27-July-2022  contractAddress;
   const ABI = [{ "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "newAddress", "type": "address" }], "name": "newContract", "type": "event" }, { "inputs": [{ "internalType": "string", "name": "name_", "type": "string" }, { "internalType": "string", "name": "symbol_", "type": "string" }, { "internalType": "uint256", "name": "supply_", "type": "uint256" }], "name": "createToken", "outputs": [], "stateMutability": "nonpayable", "type": "function" }];
@@ -45,21 +40,22 @@ export default function Home() {
 
   const passData = (data2: any) => {
     setChildData(data2);
-    let { name, symbol, supply } = setTokenParameters(data2);
-    createToken(name, symbol, supply);
+    let [ name, symbol, supply ] = setTokenParameters(data2);
+    console.log("HOME. name, symbol and supply: ", name, symbol, supply);
+    // createToken(name, symbol, supply);
   }
 
-  function setTokenParameters(data: any): { name: string, symbol: string, supply: number } {
+  function setTokenParameters(data: any): [name: string, symbol: string, supply: number] {
     console.log("MINTING: ", data);
     let name = childData.name;
     let symbol = childData.symbol;
-    let supply = childData.supply === "" ? 100000 : parseInt(childData.supply);
-    return { name: name, symbol: symbol, supply: supply };
+    let supply = childData.supply === undefined ? 100000 : parseInt(childData.supply);
+    return [name, symbol, supply];  
   }
 
   /*
     You can use a signer always, but you may want to use a provider if you want to read from the chain without the user connecting their wallet in which case you can configure wagmi to fall back to rpc url providers directly
-    To show certain parts of the dApp without forcinig the user to connect first
+    To show certain parts of the dApp without forcing the user to connect first
   */
   // const getSignerOrProvider = async () => {
   // const myProvider = provider;
