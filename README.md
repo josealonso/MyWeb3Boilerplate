@@ -1,4 +1,4 @@
-# MyWeb3Boilerplate
+# Token Generator
 
 Frontend boilerplate for my web3 projects.
 
