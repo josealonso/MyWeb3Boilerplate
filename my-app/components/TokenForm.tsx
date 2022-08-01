@@ -10,14 +10,12 @@ import { TokenData } from '../interfaces/TokenData';
 // References   https://blog.logrocket.com/how-to-create-forms-with-chakra-ui-in-react-apps/
 //https://www.kindacode.com/article/passing-data-from-a-child-component-to-the-parent-in-react/
 
-export default function TokenForm(props) {
+export default function TokenForm(props: AppProps) {
     const [name, setName] = useState("");
     const [symbol, setSymbol] = useState("");
     const [supply, setSupply] = useState("");
     const [blockchain, setBlockchain] = useState("");
-    const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [isGenerated, setIsGenerated] = useState(false);
 
     let tokenData: TokenData = {
         name: name,   // "Ficha",
@@ -27,24 +25,26 @@ export default function TokenForm(props) {
 
     // let str = "HOLA DESDE EL HIJO";
     const formToParent = () => {
+        // @ts-ignore
         props.passData(tokenData);
     }
 
     const myForm = useRef(null);
     // https://stackoverflow.com/questions/54895883/reset-to-initial-state-with-react-hooks
     const resetFields = () => {
+        // @ts-ignore
         myForm.current.reset();
     }
 
-    const handleSubmit = async event => {
+    const handleSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
         setIsLoading(true);
         //try {
-        await processsTransaction();
+        // await processTransaction();
         // } catch (error) {
         // TODO Notify the error here
         setIsLoading(false);
-        setIsGenerated(true);
+        // setIsGenerated(true);
         console.log(`From the Chid: Name: ${name} AND Symbol: ${symbol} AND Supply: ${supply} Netw: ${blockchain}`);
         tokenData.name = name; tokenData.symbol = symbol; tokenData.supply = supply === undefined ? "25000" : supply;
         resetFields();
@@ -81,9 +81,10 @@ export default function TokenForm(props) {
                         <FormLabel>Blockchain</FormLabel>
                         <Select size="lg"
                             onChange={event => setBlockchain(event.currentTarget.value)} >
-                            <option value="eth">Ethereum</option>
+                            <option value="goerli">Goerli Testnet</option>
+                            {/* <option value="eth">Ethereum</option>
                             <option value="poly">Polygon</option>
-                            <option value="bsc">Binance Smart Chain</option>
+                            <option value="bsc">Binance Smart Chain</option> */}
                         </Select>
                     </FormControl>
                     <Button width="full" variant="outline" color="teal"

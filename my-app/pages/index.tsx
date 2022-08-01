@@ -1,4 +1,4 @@
-import { Alert, Box, Container, Divider, Flex, Link, Spinner, Text } from '@chakra-ui/react';
+import { Box, Container, Divider, Flex, Link, Spinner, Text } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import create from 'zustand';
 import AddTxButton from '../components/AddTxButton';
@@ -13,7 +13,6 @@ import { contractABI } from '../configs/contract';
 import { useProvider, useSigner } from 'wagmi';
 import { isMumbaiNetwork, MUMBAI_ID, NetworkSwitcher } from '../components/NetworkSwitcher';
 import MyConnectButton from '../components/MyConnectButton';
-import SuccessMessage from '../components/SuccessMessage';
 import { useRouter } from 'next/router';
 
 // export default function Home(props: ConsumerProps<Boolean>) {
@@ -92,10 +91,6 @@ export default function Home() {
     // })
     // ********************************************************************//
 
-    setInterval(() => {
-      ;
-    }, 2000);
-
     const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_API_URL);
     const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as TokensFactory;
     const tx = await tokenContract.createToken(name, symbol, amount, { gasLimit: calculateGasLimit() });
@@ -149,6 +144,7 @@ export default function Home() {
           (
             <div>
               <Flex width="full" align="center" justifyContent="center">
+                {/* @ts-ignore */} 
                 <TokenForm passData={passData} />
                 {/* <Text>
                   Data from the Child component: {childData.name} AND {childData.symbol}
