@@ -23,9 +23,9 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
-      forking: {
-        url: process.env.MUMBAI_API_KEY_URL || "",
-      },
+      // forking: {  // `npx hardhat node` won't work with these lines.
+      //   url: process.env.MUMBAI_API_KEY_URL || "", 
+      // },
       chainId: 1337   // We set 1337 to make interacting with MetaMask simpler
     },
     mumbai: {
@@ -33,6 +33,10 @@ const config: HardhatUserConfig = {
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
       gasPrice: 35000000000,
       // saveDeployments: true,
+    },
+    goerli: {
+      url: process.env.GOERLI_API_URL || "",
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     }
   },
   gasReporter: {
@@ -46,8 +50,9 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       polygonMumbai: process.env.POLYGONSCAN_API_KEY !== undefined ? process.env.POLYGONSCAN_API_KEY : "",
+      goerli: process.env.ETHERSCAN_API_KEY !== undefined ? process.env.ETHERSCAN_API_KEY : "",
     },
-  }
+  },
 };
 
 export default config;

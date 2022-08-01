@@ -9,7 +9,7 @@ import TokenForm from '../components/TokenForm';
 import { TokensFactory } from '../../backend/typechain-types/TokensFactory';
 import { Contract } from 'ethers';
 import { ConsumerProps, createContext, useContext, useState } from 'react';
-import { contractAddress, contractABI } from '../configs/contract';
+import { contractABI } from '../configs/contract';
 import { useProvider, useSigner } from 'wagmi';
 import { isMumbaiNetwork, MUMBAI_ID, NetworkSwitcher } from '../components/NetworkSwitcher';
 import MyConnectButton from '../components/MyConnectButton';
@@ -18,8 +18,9 @@ import SuccessMessage from '../components/SuccessMessage';
 // export default function Home(props: ConsumerProps<Boolean>) {
 export default function Home() {
   // Tokens Factory Contract Address
-  const CONTRACT_ADDRESS = "0x57BDAc09E0f9Ad73F7ffF3288C4Cf5973CF8D19f";  // <--- mumbai TokensFactory 27-July-2022  contractAddress;
-  const ABI = [{ "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "newAddress", "type": "address" }], "name": "newContract", "type": "event" }, { "inputs": [{ "internalType": "string", "name": "name_", "type": "string" }, { "internalType": "string", "name": "symbol_", "type": "string" }, { "internalType": "uint256", "name": "supply_", "type": "uint256" }], "name": "createToken", "outputs": [], "stateMutability": "nonpayable", "type": "function" }];
+  // const CONTRACT_ADDRESS = "0x57BDAc09E0f9Ad73F7ffF3288C4Cf5973CF8D19f";  // <--- mumbai TokensFactory 27-July-2022 
+  const CONTRACT_ADDRESS = "0x47227af59cDb02C41501966a8ed92f47D1FD2858"  // <--- Goerli TokensFactory 01-August-2022 
+  const ABI = contractABI;
   const { data: signer, isError, isLoading } = useSigner();
   const provider2 = useProvider();
   const [areTokensCreated, setAreTokensCreated] = useState(false);
@@ -88,12 +89,13 @@ export default function Home() {
     //     console.log(' ========= Error calling createToken ', error)
     //   },
     // })
+    // ********************************************************************//
 
     setInterval(() => {
       ;
     }, 2000);
 
-    const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
+    const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_API_URL);
     const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as TokensFactory;
     const tx = await tokenContract.createToken(name, symbol, amount, { gasLimit: calculateGasLimit() });
     setLoading(true);
@@ -113,7 +115,7 @@ export default function Home() {
     // console.log("The hash for the tx is: ", tx.blockHash);
     setAreTokensCreated(true);
     importToken(tokenAddress, symbol);
-    alert(`See your brand new token in https://mumbai.polygonscan.com/token/${tokenAddress}#balances`);
+    alert(`You can see your brand new token in https://goerli.etherscan.io/token/${tokenAddress}#balances`);
   }
 
   async function showWaitingMessage(txReceipt: ethers.ContractReceipt) {

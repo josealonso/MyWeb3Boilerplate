@@ -28,10 +28,10 @@ import { providers } from 'ethers';
 export const { chains, provider, webSocketProvider } = configureChains(
   // If a user has their wallet connected to a chain that is unsupported by your app, the provider will use the first chain listed in the chains array.
   [
-    chain.polygonMumbai, // chain.hardhat, chain.polygon,
+    chain.goerli, chain.polygonMumbai, // chain.hardhat, chain.polygon,
   ],
   [
-    alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }),
+    alchemyProvider({ alchemyId: process.env.GOERLI_API_URL }),
     jsonRpcProvider({
       rpc: chain => ({
         http: `http://localhost:8545`,  // chain.rpcUrls.default,
