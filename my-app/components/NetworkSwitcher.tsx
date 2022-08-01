@@ -13,9 +13,9 @@ export function NetworkSwitcher() { // (props: ProviderProps<Boolean>) {
 
     const { chain } = useNetwork();
     // let [isMumbaiNetwork, setIsMumbaiNetwork] = useState(false);
-    console.log("chain.id", chain?.id);
+    // console.log("chain.id", chain?.id);
     if (chain?.id === MUMBAI_ID) {
-        console.log("IT is MUMBAI already --------------");
+        // console.log("IT is MUMBAI already --------------");
         // setIsMumbaiNetwork(chain?.id === MUMBAI_ID); // Error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
         isMumbaiNetwork = true;
     }

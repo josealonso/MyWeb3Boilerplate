@@ -6,7 +6,7 @@ import MyFooter from '../components/MyFooter';
 import MyHeader from '../components/MyHeader';
 import { BigNumber, ethers } from 'ethers';
 import TokenForm from '../components/TokenForm';
-import { MyToken } from '../../backend/typechain-types/MyToken';
+import { TokensFactory } from '../../backend/typechain-types/TokensFactory';
 import { Contract } from 'ethers';
 import { ConsumerProps, createContext, useContext, useState } from 'react';
 import { contractAddress, contractABI } from '../configs/contract';
@@ -94,12 +94,16 @@ export default function Home() {
     }, 2000);
 
     const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
-    const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
+    const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as TokensFactory;
     const tx = await tokenContract.createToken(name, symbol, amount, { gasLimit: calculateGasLimit() });
-    showWaitingMessage(tx);
+    setLoading(true);
+    // setLoading(true);
+    const txReceipt = await tx.wait(); // (NUM_OF_CONFIRMATIONS);
+    setLoading(false);
+    // showWaitingMessage(txReceipt);
 
     // The token address is the parameter of the emitted event
-    // console.log(" ------------------- EVENTS: ", txReceipt.events);
+    console.log(" ------------------- EVENTS: ", txReceipt.events);
     // @ts-ignore
     let tokenAddress = txReceipt.events[0].args.newAddress;
     // @ts-ignore
@@ -112,10 +116,10 @@ export default function Home() {
     alert(`See your brand new token in https://mumbai.polygonscan.com/token/${tokenAddress}#balances`);
   }
 
-  async function showWaitingMessage(tx: any) {
+  async function showWaitingMessage(txReceipt: ethers.ContractReceipt) {
     const NUM_OF_CONFIRMATIONS = 2;
-    setLoading(true);
-    await tx.wait(NUM_OF_CONFIRMATIONS);
+    // setLoading(true);
+    // await txReceipt.wait(NUM_OF_CONFIRMATIONS);
     setLoading(false);
   }
 
@@ -165,33 +169,30 @@ export default function Home() {
         {isMumbaiNetwork ?
           (
             <div>
-              < Flex width="full" align="center" justifyContent="center">
-                {/* <Flex h="100vh" py={10}> */}
+              <Flex width="full" align="center" justifyContent="center">
                 <TokenForm passData={passData} />
-                <Text>
+                {/* <Text>
                   Data from the Child component: {childData.name} AND {childData.symbol}
                   AND {childData.supply}
-                </Text>
+                </Text> */}
                 {loading ?
                   (
                     <Box>
-                      <Text>Transaction in progress</Text>
-                      <Spinner label='Transaction in progress' color='red.500' />
+                      <Text margin={"3em"}>Transaction in progress</Text>
+                      <Spinner borderStyle={"solid"} label='Transaction in progress' color='red.500' />
                     </Box>
-                  ) : ''
-                }
-                {
-                  <Box>
-                    areTokensCreated && !loading ?
-                    (
-                    <SuccessMessage />
-                    ) : ''
-                  </Box>
+                  ) :
+
+                  // {areTokensCreated ?
+                  (
+                    <Box>
+                      <SuccessMessage />
+                    </Box>
+                  )
                 }
               </Flex>
             </div>
           ) : ''
-
         }
       </Container >
     </div>
