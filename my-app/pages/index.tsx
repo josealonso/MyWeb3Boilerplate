@@ -1,4 +1,4 @@
-import { Alert, Box, Container, Divider, Flex, Spinner, Text } from '@chakra-ui/react';
+import { Alert, Box, Container, Divider, Flex, Link, Spinner, Text } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import create from 'zustand';
 import AddTxButton from '../components/AddTxButton';
@@ -14,10 +14,10 @@ import { useProvider, useSigner } from 'wagmi';
 import { isMumbaiNetwork, MUMBAI_ID, NetworkSwitcher } from '../components/NetworkSwitcher';
 import MyConnectButton from '../components/MyConnectButton';
 import SuccessMessage from '../components/SuccessMessage';
+import { useRouter } from 'next/router';
 
 // export default function Home(props: ConsumerProps<Boolean>) {
 export default function Home() {
-  // Tokens Factory Contract Address
   // const CONTRACT_ADDRESS = "0x57BDAc09E0f9Ad73F7ffF3288C4Cf5973CF8D19f";  // <--- mumbai TokensFactory 27-July-2022 
   const CONTRACT_ADDRESS = "0x47227af59cDb02C41501966a8ed92f47D1FD2858"  // <--- Goerli TokensFactory 01-August-2022 
   const ABI = contractABI;
@@ -32,6 +32,7 @@ export default function Home() {
     symbol: "",
     supply: ""
   });
+  const router = useRouter();
 
   console.log("Inside HOME. ChainContext: ", isMumbaiNetwork);
 
@@ -111,11 +112,16 @@ export default function Home() {
     // @ts-ignore
     console.log("ADDRESS ==== ", txReceipt.events[0].args.newAddress);
     console.log("ADDRESS ==== ", tokenAddress);
+    // tokenAddress = "0xA9D5F2E753141aE2660490E225F0a3b2f7eA9b8d";
+    // let tokenSymbol = "ter3";
+    router.push({
+      pathname: 'success',
+      query: { tokenAddress: tokenAddress, tokenSymbol: symbol },
+    });
+    < Link href="/success" ></Link >
     // showWaitingMessage(tx);
     // console.log("The hash for the tx is: ", tx.blockHash);
     setAreTokensCreated(true);
-    importToken(tokenAddress, symbol);
-    alert(`You can see your brand new token in https://goerli.etherscan.io/token/${tokenAddress}#balances`);
   }
 
   async function showWaitingMessage(txReceipt: ethers.ContractReceipt) {
@@ -129,35 +135,6 @@ export default function Home() {
     const provider = ethers.getDefaultProvider();
     // let maxFeeInWei = (await provider.getFeeData()).maxFeePerGas.mul(gasLimit)
     return 1500000;
-  }
-
-  async function importToken(tokenAddress: string, tokenSymbol: string, tokenDecimals = 18) {
-    const tokenImage = 'http://placekitten.com/200/300';
-    const { ethereum } = window as any;
-
-    try {
-      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
-      const wasAdded = await ethereum.request({
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20', // Initially only supports ERC20, but eventually more!
-          options: {
-            address: tokenAddress, // The address that the token is at.
-            symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
-            decimals: tokenDecimals, // The number of decimals in the token
-            image: tokenImage, // A string url of the token logo
-          },
-        },
-      });
-
-      if (wasAdded) {
-        console.log('The token has been imported');
-      } else {
-        console.log('The token COULD NOT be imported');
-      }
-    } catch (error) {
-      console.log(error);
-    }
   }
 
   return (
@@ -179,18 +156,11 @@ export default function Home() {
                 </Text> */}
                 {loading ?
                   (
-                    <Box>
-                      <Text margin={"3em"}>Transaction in progress</Text>
+                    <Box alignContent={"center"}>
+                      <Text margin={"3em"} borderBlock="WindowText" >Transaction in progress</Text>
                       <Spinner borderStyle={"solid"} label='Transaction in progress' color='red.500' />
                     </Box>
-                  ) :
-
-                  // {areTokensCreated ?
-                  (
-                    <Box>
-                      <SuccessMessage />
-                    </Box>
-                  )
+                  ) : ''
                 }
               </Flex>
             </div>

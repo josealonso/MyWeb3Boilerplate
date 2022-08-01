@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-    Text, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, useDisclosure, ModalOverlay
+    Text, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, useDisclosure, ModalOverlay, Button
 }
     from '@chakra-ui/react';
 
@@ -8,9 +8,14 @@ export default function SuccessMessage() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [isModalOpen, setIsModalOpen] = useState(true);
 
-    setInterval(() => {
+    function closePopup() {
+        console.log(" ========================= Inside closePopup");
         setIsModalOpen(false);
-    }, 3000);
+    }
+
+    // setInterval(() => {
+    //     setIsModalOpen(false);
+    // }, 3000);
 
     return (
         <div>
@@ -26,7 +31,7 @@ export default function SuccessMessage() {
                         <Text>Let's make the token visible in your wallet</Text>
                     </ModalBody>
                     <ModalFooter>
-                        {/* <Button onClick={onClose}>Close</Button> */}
+                        <Button onClick={closePopup}>OK</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

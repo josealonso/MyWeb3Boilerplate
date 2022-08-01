@@ -25,7 +25,7 @@ const MyForm = () => {
         <VStack w="full" h="full" p={10} spacing={10} alignItems="flex-start" >
             <VStack spacing={3} alignItems="flex-start" >
                 <Heading size="2x1">Token Details</Heading>
-                <Text>Select the options you want for your token</Text>
+                {/* <Text>Select the options you want for your token</Text> */}
             </VStack>
             <SimpleGrid columns={2} columnGap={3} rowGap={6} w="full">
                 <FormControl onSubmit={handleSubmit(onSubmit)}>
@@ -37,13 +37,13 @@ const MyForm = () => {
                         <FormLabel>Token Symbol</FormLabel>
                         <Input placeholder="MTK" />
                     </GridItem>
-                    <GridItem colSpan={2}>
+                    {/* <GridItem colSpan={2}>
                         <FormLabel>Token Address</FormLabel>
                         <Input placeholder="0x......" />
-                    </GridItem>
+                    </GridItem> */}
                     <GridItem colSpan={1}>
                         <FormLabel>Token Supply</FormLabel>
-                        <Input placeholder="2000" />
+                        <Input placeholder="10000" />
                     </GridItem>
                     <GridItem colSpan={1}>
                         <FormLabel>Blockchain</FormLabel>
@@ -54,9 +54,9 @@ const MyForm = () => {
                             <option value="bsc">Binance Smart Chain</option> */}
                         </Select>
                     </GridItem>
-                    <GridItem colSpan={2}>
+                    {/* <GridItem colSpan={2}>
                         <Checkbox defaultChecked>Burn feature</Checkbox>
-                    </GridItem>
+                    </GridItem> */}
                     <GridItem colSpan={2}>
                         <Button size="lg" w="full" >
                             Mint tokens
