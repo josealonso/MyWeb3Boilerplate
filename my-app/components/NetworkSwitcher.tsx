@@ -33,16 +33,16 @@ export function NetworkSwitcher() { // (props: ProviderProps<Boolean>) {
             {isMumbaiNetwork ?
                 (
                     <div>
-                        <Alert status='success'>
-                            <AlertIcon />
+                        <Alert backgroundColor={"green.200"}>
+                            {/* <AlertIcon /> */}
                             Connected to the {CHAIN} chain. You can continue.
                         </Alert>
                     </div>
                 ) :
                 (
                     <div>
-                        <Alert status='error'>
-                            <AlertIcon />
+                        <Alert backgroundColor={"red.200"}>
+                            {/* <AlertIcon /> */}
                             <AlertTitle>Not connected to the {CHAIN} chain!</AlertTitle>
                             <AlertDescription>Press on the above button to connect to the {CHAIN} chain.</AlertDescription>
                         </Alert>
