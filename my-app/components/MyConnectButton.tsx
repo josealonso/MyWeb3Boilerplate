@@ -1,10 +1,10 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Heading } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 // export default function AddTxButton() {
 export default function MyConnectButton() {
     return (
-        <Box padding="1.5rem">
+        <Box display={"flex"} padding="1.5rem">
             <ConnectButton label="Connect wallet"
                 accountStatus={{
                     smallScreen: "avatar",
@@ -18,7 +18,9 @@ export default function MyConnectButton() {
                     smallScreen: false,
                     largeScreen: true,
                 }} />
+            <Heading paddingLeft={"7%"}>Have your own token on the Goerli blockchain</Heading>
         </Box>
+
     );
 };
 
