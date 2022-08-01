@@ -1,4 +1,4 @@
-import { Box, Container, Divider, Flex, Spinner, Text } from '@chakra-ui/react';
+import { Alert, Box, Container, Divider, Flex, Spinner, Text } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import create from 'zustand';
 import AddTxButton from '../components/AddTxButton';
@@ -26,7 +26,6 @@ export default function Home() {
   // loading is set to true when we are waiting for a transaction to get mined
   const [loading, setLoading] = useState(false);
 
-  // let parentTokenData: TokenData = { name: "", symbol: "", supply: "" };
   const [childData, setChildData] = useState({
     name: "",
     symbol: "",
@@ -40,17 +39,17 @@ export default function Home() {
 
   const passData = (data2: any) => {
     setChildData(data2);
-    let [ name, symbol, supply ] = setTokenParameters(data2);
+    let [name, symbol, supply] = setTokenParameters(data2);
     console.log("HOME. name, symbol and supply: ", name, symbol, supply);
-    // createToken(name, symbol, supply);
+    createToken(name, symbol, supply);
   }
 
   function setTokenParameters(data: any): [name: string, symbol: string, supply: number] {
     console.log("MINTING: ", data);
-    let name = childData.name;
-    let symbol = childData.symbol;
-    let supply = childData.supply === undefined ? 100000 : parseInt(childData.supply);
-    return [name, symbol, supply];  
+    let name = data.name;
+    let symbol = data.symbol;
+    let supply = data.supply === undefined ? 100000 : parseInt(data.supply);
+    return [name, symbol, supply];
   }
 
   /*
@@ -69,8 +68,10 @@ export default function Home() {
   }
 
   async function createToken(name: string, symbol: string, supply: number) {
+    const NUM_OF_CONFIRMATIONS = 2;
     let amount = toWei(supply);
 
+    //****** Using the wagmi library to call the contract function ********//
     // const contractWrite = useContractWrite({
     //   addressOrName: CONTRACT_ADDRESS,
     //   contractInterface: ABI,
@@ -95,20 +96,20 @@ export default function Home() {
     const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_ID);
     const tokenContract = new Contract(CONTRACT_ADDRESS, ABI, signer || provider) as MyToken;
     const tx = await tokenContract.createToken(name, symbol, amount, { gasLimit: calculateGasLimit() });
-    const txReceipt = await tx.wait();
+    showWaitingMessage(tx);
+
     // The token address is the parameter of the emitted event
-    console.log(txReceipt.events);
+    // console.log(" ------------------- EVENTS: ", txReceipt.events);
     // @ts-ignore
     let tokenAddress = txReceipt.events[0].args.newAddress;
     // @ts-ignore
     console.log("ADDRESS ==== ", txReceipt.events[0].args.newAddress);
     console.log("ADDRESS ==== ", tokenAddress);
-    showWaitingMessage(tx);
-    // let tokenAddress = "0x4CE5C99E5A4479CC6144037902329295419962F4";
-    let tokenSymbol = "VLC";
+    // showWaitingMessage(tx);
     // console.log("The hash for the tx is: ", tx.blockHash);
     setAreTokensCreated(true);
-    importToken(tokenAddress, tokenSymbol);
+    importToken(tokenAddress, symbol);
+    alert(`See your brand new token in https://mumbai.polygonscan.com/token/${tokenAddress}#balances`);
   }
 
   async function showWaitingMessage(tx: any) {
@@ -121,11 +122,10 @@ export default function Home() {
   function calculateGasLimit(): number {
     const provider = ethers.getDefaultProvider();
     // let maxFeeInWei = (await provider.getFeeData()).maxFeePerGas.mul(gasLimit)
-    return 3000000;
+    return 1500000;
   }
 
   async function importToken(tokenAddress: string, tokenSymbol: string, tokenDecimals = 18) {
-    // const tokenAddress = '0xd00981105e61274c8a5cd5a88fe7e037d935b513';
     const tokenImage = 'http://placekitten.com/200/300';
     const { ethereum } = window as any;
 
@@ -155,39 +155,46 @@ export default function Home() {
   }
 
   return (
-    <Container maxW="container.xl" p={0}>
-      {/* <MyHeader /> */}
-      <MyConnectButton />
-      <NetworkSwitcher />
-      <Divider p={5} />
+    <div>
+      <Container maxW="container.xl" p={0}>
+        {/* <MyHeader /> */}
+        <MyConnectButton />
+        <NetworkSwitcher />
+        <Divider p={5} />
 
-      {isMumbaiNetwork ?
-        (
-          < Flex width="full" align="center" justifyContent="center">
-            {/* <Flex h="100vh" py={10}> */}
-            <TokenForm passData={passData} />
-            <Text>
-              Data from the Child component: {childData.name} AND {childData.symbol}
-              AND {childData.supply}
-            </Text>
-            {loading ?
-              (
-                <Box>
-                  <Text>Transaction in progress</Text>
-                  <Spinner label='Transaction in progress' color='red.500' />
-                </Box>
-              ) : ''
-            }
-            {
-              areTokensCreated && !loading ?
-                (
-                  <SuccessMessage />
-                ) : ''
-            }
-          </Flex>
-        ) : ''
-      }
-    </Container >
+        {isMumbaiNetwork ?
+          (
+            <div>
+              < Flex width="full" align="center" justifyContent="center">
+                {/* <Flex h="100vh" py={10}> */}
+                <TokenForm passData={passData} />
+                <Text>
+                  Data from the Child component: {childData.name} AND {childData.symbol}
+                  AND {childData.supply}
+                </Text>
+                {loading ?
+                  (
+                    <Box>
+                      <Text>Transaction in progress</Text>
+                      <Spinner label='Transaction in progress' color='red.500' />
+                    </Box>
+                  ) : ''
+                }
+                {
+                  <Box>
+                    areTokensCreated && !loading ?
+                    (
+                    <SuccessMessage />
+                    ) : ''
+                  </Box>
+                }
+              </Flex>
+            </div>
+          ) : ''
+
+        }
+      </Container >
+    </div>
   )
 
 }

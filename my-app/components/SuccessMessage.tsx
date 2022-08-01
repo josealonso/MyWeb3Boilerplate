@@ -13,7 +13,7 @@ export default function SuccessMessage() {
     }, 3000);
 
     return (
-        <>
+        <div>
             <Modal isCentered isOpen={isModalOpen} onClose={onClose}>
                 <ModalOverlay
                     bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'
@@ -30,6 +30,6 @@ export default function SuccessMessage() {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </>
+        </div>
     )
 }

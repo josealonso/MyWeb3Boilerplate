@@ -31,20 +31,21 @@ export function NetworkSwitcher() { // (props: ProviderProps<Boolean>) {
         <Box padding="0.5rem">
             {isMumbaiNetwork ?
                 (
-                    <>
+                    <div>
                         <Alert status='success'>
                             <AlertIcon />
                             Connected to the Mumbai chain. You can continue.
                         </Alert>
-                    </>
+                    </div>
                 ) :
                 (
-                    <Alert status='error'>
-                        <AlertIcon />
-                        <AlertTitle>Not connected to the Mumbai chain!</AlertTitle>
-                        <AlertDescription>Press on the above button to connect to the Mumbai chain.</AlertDescription>
-                    </Alert>
-
+                    <div>
+                        <Alert status='error'>
+                            <AlertIcon />
+                            <AlertTitle>Not connected to the Mumbai chain!</AlertTitle>
+                            <AlertDescription>Press on the above button to connect to the Mumbai chain.</AlertDescription>
+                        </Alert>
+                    </div>
                 )
             }
         </Box >
