@@ -28,7 +28,7 @@ export default function SuccessMessage() {
                     <ModalCloseButton />
                     <ModalBody>
                         <Text>Your tokens have been minted!</Text>
-                        <Text>Let's make the token visible in your wallet</Text>
+                        <Text>Let us make the token visible in your wallet</Text>
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={closePopup}>OK</Button>
